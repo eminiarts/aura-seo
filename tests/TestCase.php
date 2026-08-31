@@ -7,8 +7,11 @@ use Aura\Base\Facades\Aura;
 use Aura\Base\Providers\AuthServiceProvider;
 use Aura\Seo\AuraSeoServiceProvider;
 use Aura\Seo\Tests\Fixtures\Article;
+use Aura\Seo\Tests\Fixtures\CustomPage;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
+use Illuminate\Support\Facades\Schema;
 use Intervention\Image\Laravel\ServiceProvider as ImageServiceProvider;
 use Lab404\Impersonate\ImpersonateServiceProvider;
 use Laravel\Fortify\FortifyServiceProvider;
@@ -37,6 +40,21 @@ class TestCase extends Orchestra
     {
         $this->defineEnvironment($app);
         (require __DIR__.'/../vendor/eminiarts/aura-cms/database/migrations/create_aura_tables.php.stub')->up();
+
+        Schema::create('seo_test_pages', function (Blueprint $table): void {
+            $table->id();
+            $table->string('title');
+            $table->string('summary')->nullable();
+            $table->string('seo_meta_title')->nullable();
+            $table->string('seo_meta_description')->nullable();
+            $table->string('seo_canonical_url')->nullable();
+            $table->boolean('seo_index')->nullable();
+            $table->boolean('seo_follow')->nullable();
+            if ($this->teamsEnabled) {
+                $table->unsignedBigInteger('team_id')->nullable()->index();
+            }
+            $table->timestamps();
+        });
     }
 
     protected function getPackageProviders($app): array
@@ -58,7 +76,7 @@ class TestCase extends Orchestra
         parent::setUp();
         $this->withoutVite();
         Factory::guessFactoryNamesUsing(fn (string $modelName) => 'Aura\\Base\\Database\\Factories\\'.class_basename($modelName).'Factory');
-        Aura::registerResources([Article::class]);
+        Aura::registerResources([Article::class, CustomPage::class]);
     }
 
     private function useIsolatedFilesystemPaths($app): void
