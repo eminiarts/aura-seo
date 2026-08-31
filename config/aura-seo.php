@@ -11,6 +11,9 @@ return [
 
     'resources' => [],
 
+    /* Optional callback resolving an Aura Image value to an absolute URL. */
+    'image_url_resolver' => null,
+
     'fallbacks' => [
         'title' => env('APP_NAME', 'Aura'),
         'description' => null,

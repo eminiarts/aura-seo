@@ -2,7 +2,11 @@
 
 namespace Aura\Seo;
 
+use Aura\Base\Aura;
+use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Data\SeoResourceDefinition;
+use Aura\Seo\Resources\SiteProfile;
+use Aura\Seo\Services\ConfiguredSiteProfileResolver;
 use Aura\Seo\Services\SeoRegistry;
 use Aura\Seo\Support\CanonicalUrlNormalizer;
 use Spatie\LaravelPackageTools\Package;
@@ -22,6 +26,11 @@ class AuraSeoServiceProvider extends PackageServiceProvider
     {
         $this->app->singleton(CanonicalUrlNormalizer::class);
         $this->app->singleton(SeoRegistry::class);
+        $this->app->singleton(SiteProfileResolver::class, ConfiguredSiteProfileResolver::class);
+
+        $this->callAfterResolving(Aura::class, function (Aura $aura): void {
+            $aura->registerResources([SiteProfile::class]);
+        });
     }
 
     public function packageBooted(): void
