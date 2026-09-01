@@ -1,6 +1,9 @@
 @php($preview = app(\Aura\Seo\Services\PreviewFactory::class)->make($metadata))
-@php($attributes = $attributes ?? new \Illuminate\View\ComponentAttributeBag)
-<div {{ $attributes->merge(['class' => 'space-y-6']) }} data-aura-seo-preview>
+@php($previewClass = \Illuminate\Support\Arr::toCssClasses([
+    'space-y-6',
+    isset($attributes) && $attributes instanceof \Illuminate\View\ComponentAttributeBag ? $attributes->get('class') : (is_array($attributes ?? null) ? ($attributes['class'] ?? null) : null),
+]))
+<div class="{{ $previewClass }}" data-aura-seo-preview>
     <section aria-label="Search result preview" class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <p class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">Search preview</p>
         @if($preview->searchUrl)

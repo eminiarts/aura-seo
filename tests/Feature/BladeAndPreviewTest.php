@@ -78,3 +78,23 @@ test('previews escape content and omit absent values', function () {
         ->toContain('&lt;script&gt;alert(1)&lt;/script&gt;')
         ->not->toContain('<img');
 });
+
+test('preview partial accepts plain array attributes when included from a field view', function () {
+    $metadata = new ResolvedMetadata(
+        canonical: 'https://example.test/post',
+        description: 'Description',
+        openGraph: [],
+        robots: ['index', 'follow'],
+        title: 'Page title',
+        twitter: [],
+    );
+
+    $html = view('aura-seo::components.preview', [
+        'metadata' => $metadata,
+        'attributes' => ['class' => 'border'],
+    ])->render();
+
+    expect($html)->toContain('data-aura-seo-preview')
+        ->toContain('space-y-6')
+        ->toContain('border');
+});

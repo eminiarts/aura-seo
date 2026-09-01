@@ -8,6 +8,7 @@ use Aura\Base\Fields\Slug;
 use Aura\Base\Fields\Tab;
 use Aura\Base\Fields\Text;
 use Aura\Base\Fields\Textarea;
+use Aura\Base\Fields\View;
 use Aura\Seo\Fields\SeoFieldGroup;
 
 test('the reusable group is composed only from existing Aura field types', function () {
@@ -23,6 +24,7 @@ test('the reusable group is composed only from existing Aura field types', funct
         Tab::class,
         Text::class,
         Textarea::class,
+        View::class,
     ]);
 });
 
@@ -45,6 +47,7 @@ test('the reusable group provides every documented SEO value with unique prefixe
             'page_seo_twitter_description',
             'page_seo_twitter_image',
             'page_seo_twitter_card',
+            'page_seo_preview',
         );
 });
 

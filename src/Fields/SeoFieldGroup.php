@@ -10,6 +10,7 @@ use Aura\Base\Fields\Slug;
 use Aura\Base\Fields\Tab;
 use Aura\Base\Fields\Text;
 use Aura\Base\Fields\Textarea;
+use Aura\Base\Fields\View;
 
 final class SeoFieldGroup
 {
@@ -55,6 +56,14 @@ final class SeoFieldGroup
                     'summary' => 'Summary',
                     'summary_large_image' => 'Summary with large image',
                 ],
+            ]),
+            self::field('Preview', $slug('preview_panel'), Panel::class, ['style' => ['width' => '100']]),
+            self::field('Resolved preview', $slug('preview'), View::class, [
+                'global' => true,
+                'instructions' => 'Preview uses the first enabled mapped SiteProfile for this team and Resource.',
+                'on_view' => false,
+                'validation' => '',
+                'view' => 'aura-seo::fields.preview',
             ]),
         ];
     }

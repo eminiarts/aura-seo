@@ -27,6 +27,10 @@ final class SeoRegistry
 
         $this->definitions[$definition->key] = $definition;
 
+        if (app()->bound(SeoCacheInvalidationRegistrar::class)) {
+            app(SeoCacheInvalidationRegistrar::class)->registerResource($definition->resourceClass);
+        }
+
         return $this;
     }
 

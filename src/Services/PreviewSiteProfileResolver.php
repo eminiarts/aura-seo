@@ -1,0 +1,70 @@
+<?php
+
+namespace Aura\Seo\Services;
+
+use Aura\Seo\Contracts\SiteProfileResolver;
+use Aura\Seo\Data\SiteProfileData;
+use Aura\Seo\Resources\SiteProfile;
+use Illuminate\Database\Eloquent\Model;
+
+final readonly class PreviewSiteProfileResolver
+{
+    public function __construct(private SiteProfileResolver $profiles) {}
+
+    public function resolveFor(Model $resource): ?SiteProfileData
+    {
+        if ($resource instanceof SiteProfile) {
+            return $resource->toSeoData();
+        }
+
+        $requestedHost = trim((string) request()->query('seo_host', ''));
+        $teamId = $this->teamId($resource);
+
+        if ($requestedHost !== '') {
+            $profile = $this->profiles->resolve($requestedHost);
+
+            if ($profile && (! config('aura.teams') || $teamId === null || $profile->toSeoData()->teamId === $teamId)) {
+                return $profile->toSeoData();
+            }
+        }
+
+        foreach ($this->candidateHosts($teamId) as $host) {
+            $profile = $this->profiles->resolve($host);
+
+            if ($profile) {
+                return $profile->toSeoData();
+            }
+        }
+
+        return null;
+    }
+
+    /** @return array<int, string> */
+    private function candidateHosts(?int $teamId): array
+    {
+        $hosts = [];
+
+        foreach ((array) config('aura-seo.sites', []) as $host => $site) {
+            if (! is_string($host) || ! is_array($site)) {
+                continue;
+            }
+
+            if (config('aura.teams')) {
+                if ($teamId === null || ! is_numeric($site['team_id'] ?? null) || (int) $site['team_id'] !== $teamId) {
+                    continue;
+                }
+            }
+
+            $hosts[] = $host;
+        }
+
+        return $hosts;
+    }
+
+    private function teamId(Model $resource): ?int
+    {
+        $teamId = $resource->getAttribute('team_id');
+
+        return is_numeric($teamId) ? (int) $teamId : null;
+    }
+}
