@@ -4,7 +4,6 @@ namespace Aura\Seo\Services;
 
 use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Data\SiteProfileData;
-use Aura\Seo\Resources\SiteProfile;
 use Illuminate\Database\Eloquent\Model;
 
 final readonly class PreviewSiteProfileResolver
@@ -13,10 +12,6 @@ final readonly class PreviewSiteProfileResolver
 
     public function resolveFor(Model $resource): ?SiteProfileData
     {
-        if ($resource instanceof SiteProfile) {
-            return $resource->toSeoData();
-        }
-
         $requestedHost = trim((string) request()->query('seo_host', ''));
         $teamId = $this->teamId($resource);
 

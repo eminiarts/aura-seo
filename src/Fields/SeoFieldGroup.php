@@ -68,7 +68,7 @@ final class SeoFieldGroup
             self::field('Preview', $slug('preview_panel'), Panel::class, ['style' => ['width' => '100']]),
             self::field('Resolved preview', $slug('preview'), View::class, [
                 'global' => true,
-                'instructions' => 'Preview uses the first enabled mapped SiteProfile for this team and Resource.',
+                'instructions' => 'Preview uses the first enabled SEO settings profile for this team and Resource.',
                 'on_view' => false,
                 'validation' => '',
                 'view' => 'aura-seo::fields.preview',

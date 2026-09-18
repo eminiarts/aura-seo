@@ -1,14 +1,6 @@
 <?php
 
 return [
-    /*
-    | Legacy SiteProfile mappings remain readable during migration. New
-    | installations configure one profile per Team in Aura Settings.
-    */
-    'sites' => [
-        // 'www.example.com' => ['profile_id' => 1, 'team_id' => 1],
-    ],
-
     'resources' => [],
 
     'settings' => [

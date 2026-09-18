@@ -2,7 +2,7 @@
 
 namespace Aura\Seo\Services;
 
-use Aura\Seo\Resources\SiteProfile;
+use Aura\Base\Resources\Option;
 use Illuminate\Database\Eloquent\Model;
 
 final class SeoCacheInvalidationRegistrar
@@ -14,7 +14,8 @@ final class SeoCacheInvalidationRegistrar
 
     public function register(): void
     {
-        $this->registerResource(SiteProfile::class);
+        Option::saved(fn (Option $option): bool => $this->invalidateSettingsAndContinue($option));
+        Option::deleted(fn (Option $option): bool => $this->invalidateSettingsAndContinue($option));
 
         foreach ($this->registry->all() as $definition) {
             $this->registerResource($definition->resourceClass);
@@ -39,12 +40,6 @@ final class SeoCacheInvalidationRegistrar
             return;
         }
 
-        if ($model instanceof SiteProfile) {
-            $this->cache->invalidate($this->teamId($model), is_numeric($model->getKey()) ? (int) $model->getKey() : null);
-
-            return;
-        }
-
         if ($this->registry->findFor($model) !== null) {
             $this->cache->invalidate($this->teamId($model));
         }
@@ -62,5 +57,21 @@ final class SeoCacheInvalidationRegistrar
         $this->invalidateModel($model);
 
         return true;
+    }
+
+    private function invalidateSettingsAndContinue(Option $option): bool
+    {
+        if ($this->isSettingsOption($option)) {
+            $this->cache->invalidate($this->teamId($option));
+        }
+
+        return true;
+    }
+
+    private function isSettingsOption(Option $option): bool
+    {
+        $name = $option->getAttribute('name');
+
+        return $name === 'settings' || (is_string($name) && preg_match('/^team\\.\\d+\\.settings$/', $name) === 1);
     }
 }

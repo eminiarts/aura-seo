@@ -1,30 +1,26 @@
 <?php
 
+use Aura\Base\Resources\Option;
+use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Data\SiteProfileData;
-use Aura\Seo\Resources\SiteProfile;
 use Aura\Seo\Services\SeoCache;
 use Aura\Seo\Services\SeoRegistry;
 use Aura\Seo\Tests\Fixtures\Article;
 
-function sitemapProfile(string $host = 'example.test', bool $index = true, ?string $rules = null): SiteProfile
+function sitemapProfile(string $host = 'example.test', bool $index = true, ?string $rules = null): SiteProfileData
 {
-    $profile = SiteProfile::withoutGlobalScopes()->create([
-        'fields' => [
-            'canonical_base_url' => 'https://'.$host,
-            'enabled' => true,
-            'hostname' => $host,
-            'robots_follow' => true,
-            'robots_index' => $index,
-            'robots_rules' => $rules,
-            'title_template' => '%s | %site%',
-        ],
-        'title' => 'Example',
+    createSeoSettings([
+        'seo-canonical-base-url' => 'https://'.$host,
+        'seo-enabled' => true,
+        'seo-robots-follow' => true,
+        'seo-robots-index' => $index,
+        'seo-robots-rules' => $rules,
+        'seo-site-name' => 'Example',
+        'seo-title-pattern' => '[Post Title] [Separator] [Site Name]',
     ]);
 
-    config()->set('aura-seo.sites', [$host => ['profile_id' => $profile->getKey()]]);
-
-    return $profile;
+    return app(SiteProfileResolver::class)->resolve($host) ?? throw new LogicException('SEO settings were not resolved.');
 }
 
 function registerSitemapDefinition(): void
@@ -117,12 +113,12 @@ test('cache keys are reused and invalidated after registered resource changes', 
     $calls = 0;
     $cache = app(SeoCache::class);
 
-    expect($cache->remember($profile->toSeoData(), 'probe', function () use (&$calls): int {
+    expect($cache->remember($profile, 'probe', function () use (&$calls): int {
         $calls++;
 
         return $calls;
     }))->toBe(1)
-        ->and($cache->remember($profile->toSeoData(), 'probe', function () use (&$calls): int {
+        ->and($cache->remember($profile, 'probe', function () use (&$calls): int {
             $calls++;
 
             return $calls;
@@ -130,9 +126,18 @@ test('cache keys are reused and invalidated after registered resource changes', 
 
     $article->update(['title' => 'Cache updated']);
 
-    expect($cache->remember($profile->toSeoData(), 'probe', function () use (&$calls): int {
+    expect($cache->remember($profile, 'probe', function () use (&$calls): int {
         $calls++;
 
         return $calls;
     }))->toBe(2);
+
+    $settings = Option::withoutGlobalScopes()->where('name', 'settings')->firstOrFail();
+    $settings->update(['value' => array_replace($settings->value, ['seo-site-name' => 'Changed'])]);
+
+    expect($cache->remember($profile, 'probe', function () use (&$calls): int {
+        $calls++;
+
+        return $calls;
+    }))->toBe(3);
 });

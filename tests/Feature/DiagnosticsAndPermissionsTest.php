@@ -1,32 +1,27 @@
 <?php
 
 use Aura\Base\Settings\SettingsRegistry;
+use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Data\SiteProfileData;
-use Aura\Seo\Resources\SiteProfile;
 use Aura\Seo\Services\SeoDiagnostics;
 use Aura\Seo\Services\SeoPermissionRegistrar;
 use Aura\Seo\Services\SeoRegistry;
 use Aura\Seo\Tests\Fixtures\Article;
 use Illuminate\Support\Facades\Gate;
 
-function diagnosticsProfile(string $host = 'example.test'): SiteProfile
+function diagnosticsProfile(string $host = 'example.test'): SiteProfileData
 {
-    $profile = SiteProfile::withoutGlobalScopes()->create([
-        'fields' => [
-            'canonical_base_url' => 'https://'.$host,
-            'enabled' => true,
-            'hostname' => $host,
-            'robots_follow' => true,
-            'robots_index' => true,
-            'title_template' => '%s | %site%',
-        ],
-        'title' => 'Example',
+    createSeoSettings([
+        'seo-canonical-base-url' => 'https://'.$host,
+        'seo-enabled' => true,
+        'seo-robots-follow' => true,
+        'seo-robots-index' => true,
+        'seo-site-name' => 'Example',
+        'seo-title-pattern' => '[Post Title] [Separator] [Site Name]',
     ]);
 
-    config()->set('aura-seo.sites', [$host => ['profile_id' => $profile->getKey()]]);
-
-    return $profile;
+    return app(SiteProfileResolver::class)->resolve($host) ?? throw new LogicException('SEO settings were not resolved.');
 }
 
 function registerDiagnosticsDefinition(): void
@@ -61,7 +56,7 @@ test('diagnostics surface duplicate canonicals and missing descriptions', functi
         'title' => 'Second',
     ]);
 
-    $issues = app(SeoDiagnostics::class)->scan($profile->toSeoData());
+    $issues = app(SeoDiagnostics::class)->scan($profile);
 
     expect(collect($issues)->contains(fn ($issue): bool => $issue->message === 'Missing description after all SEO fallbacks resolved.'))->toBeTrue()
         ->and(collect($issues)->contains(fn ($issue): bool => $issue->message === 'Duplicate canonical URL shared across multiple public records.'))->toBeTrue();
@@ -89,7 +84,7 @@ test('diagnostics are embedded in settings while the command remains permission-
         ->and(Gate::forUser($auditor)->allows('aura-seo.diagnose'))->toBeTrue();
 
     expect(app(SettingsRegistry::class)->has('seo'))->toBeTrue()
-        ->and(collect(app(SettingsRegistry::class)->fields())->contains(
+        ->and(collect(app(SettingsRegistry::class)->page('seo')->fields)->contains(
             fn (array $field): bool => ($field['view'] ?? null) === 'aura-seo::settings.diagnostics',
         ))->toBeTrue();
 

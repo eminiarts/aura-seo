@@ -1,5 +1,6 @@
 <?php
 
+use Aura\Base\Resources\Option;
 use Aura\Base\Resources\Role;
 use Aura\Base\Resources\Team;
 use Aura\Base\Resources\User;
@@ -19,6 +20,21 @@ function clearSeoCurrentTeamCache(int $userId): void
         : "user_{$userId}_current_team_id";
 
     Cache::forget($key);
+}
+
+/** @param array<string, mixed> $values */
+function createSeoSettings(array $values, ?int $teamId = null): Option
+{
+    $attributes = [
+        'name' => config('aura.teams') ? "team.{$teamId}.settings" : 'settings',
+        'value' => $values,
+    ];
+
+    if (config('aura.teams')) {
+        $attributes['team_id'] = $teamId;
+    }
+
+    return Option::withoutGlobalScopes()->create($attributes);
 }
 
 function createSeoUserWithPermissions(array $permissions, ?int $teamId = null, bool $superAdmin = false): User

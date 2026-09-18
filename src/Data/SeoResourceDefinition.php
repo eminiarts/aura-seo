@@ -69,6 +69,13 @@ final class SeoResourceDefinition
         return $this;
     }
 
+    public function descriptionField(): ?string
+    {
+        return is_string($this->descriptionMapping) && $this->descriptionMapping !== ''
+            ? $this->descriptionMapping
+            : null;
+    }
+
     public function fields(string $prefix): self
     {
         $this->fieldPrefix = trim($prefix, '_- ');
@@ -117,6 +124,13 @@ final class SeoResourceDefinition
         $this->titleMapping = $mapping;
 
         return $this;
+    }
+
+    public function titleField(): ?string
+    {
+        return is_string($this->titleMapping) && $this->titleMapping !== ''
+            ? $this->titleMapping
+            : null;
     }
 
     /** @param Closure(Model, SiteProfileData): string $resolver */

@@ -9,7 +9,6 @@ final readonly class SiteProfileData
         public bool $enabled,
         public bool $follow,
         public string $hostname,
-        public ?int $id = null,
         public bool $index = false,
         public string $locale = 'en',
         public ?string $defaultDescription = null,
@@ -30,11 +29,5 @@ final readonly class SiteProfileData
             'title' => $this->name,
             default => null,
         };
-    }
-
-    /** @deprecated SiteProfileResolver now returns this value object directly. */
-    public function toSeoData(): self
-    {
-        return $this;
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 final readonly class SeoDefaults
 {
-    public function __construct(private TitlePatternRenderer $titles) {}
+    public function __construct(private SeoRegistry $registry, private TitlePatternRenderer $titles) {}
 
     public function metaTitle(Model $resource, mixed $value): mixed
     {
@@ -21,7 +21,8 @@ final readonly class SeoDefaults
                 'seo-title-pattern',
                 config('aura-seo.settings.title_pattern', '[Post Title] [Separator] [Site Name]'),
             ),
-            postTitle: $this->string($resource->getAttribute('title')),
+            postTitle: $this->string(data_get($resource, $this->registry->findFor($resource)?->titleField() ?? 'title'))
+                ?? $this->string($resource->getAttribute('title')),
             separator: (string) Aura::setting('seo-separator', config('aura-seo.settings.separator', '|')),
             siteName: $this->string(Aura::setting('seo-site-name', config('aura-seo.settings.site_name', config('app.name')))),
         );

@@ -42,7 +42,7 @@ final class CanonicalUrlNormalizer
         }
 
         if (! $allowExternal && $this->origin($parts) !== $this->origin($base)) {
-            throw new InvalidArgumentException('Canonical URL host must match the active SiteProfile.');
+            throw new InvalidArgumentException('Canonical URL host must match the active SEO settings profile.');
         }
 
         $path = $this->normalizePath($parts['path'] ?? '/');

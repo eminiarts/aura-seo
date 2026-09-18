@@ -9,16 +9,12 @@ use Illuminate\Support\Facades\Cache;
 
 final class SeoCache
 {
-    public function invalidate(?int $teamId = null, ?int $profileId = null): void
+    public function invalidate(?int $teamId = null): void
     {
         $this->bumpVersion('global');
 
         if ($teamId !== null) {
             $this->bumpVersion("team:{$teamId}");
-        }
-
-        if ($profileId !== null) {
-            $this->bumpVersion("profile:{$profileId}");
         }
     }
 
@@ -48,9 +44,7 @@ final class SeoCache
         return 'aura-seo:'.sha1(json_encode([
             'global' => $this->version('global'),
             'host' => $profile->hostname,
-            'profile' => $profile->id,
             'profile_hash' => sha1(json_encode($profile, JSON_THROW_ON_ERROR)),
-            'profile_version' => $profile->id === null ? 0 : $this->version("profile:{$profile->id}"),
             'segment' => $segment,
             'team' => $profile->teamId,
             'team_version' => $profile->teamId === null ? 0 : $this->version("team:{$profile->teamId}"),

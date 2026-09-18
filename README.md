@@ -16,7 +16,7 @@ is not imported or required by production code.
 
 ### SEO settings
 
-![Aura SEO SiteProfile editor](docs/screenshots/02-site-profile-edit.png)
+![Aura SEO settings](docs/screenshots/02-site-profile-edit.png)
 
 ### Settings diagnostics
 
@@ -28,7 +28,7 @@ is not imported or required by production code.
 
 ## Features
 
-- one SEO settings tab per Team for canonical URL, robots defaults, title
+- one SEO settings page per Team for canonical URL, robots defaults, title
   patterns, locale, and social-image defaults
 - reusable `SeoFieldGroup` built only from existing Aura fields
 - deterministic metadata resolution order: record override → Resource mapping →
@@ -43,7 +43,7 @@ is not imported or required by production code.
 - explicit `robots.txt` generation with safe directive sanitization
 - cache reuse plus automatic invalidation on SEO settings or registered Resource
   changes
-- diagnostics embedded in the SEO settings tab plus a CLI command for
+- diagnostics embedded in SEO settings plus a CLI command for
   canonical, description, and sitemap coverage
 - Team-aware hostname isolation and permission-aware public boundaries
 - admin gates and permission catalog for SEO management and diagnostics
@@ -85,16 +85,14 @@ To expose anything publicly, the host must do two things:
 
 ## SEO settings
 
-Aura SEO registers a standard settings tab under `/admin/settings`. Each Team
-stores one profile containing its site name, canonical base URL, separator,
+Aura SEO registers a sidebar entry at `/admin/settings/seo`. Each Team stores
+its site name, canonical base URL, separator,
 title pattern, default description, Open Graph and Twitter images, locale, and
-robots behavior. Diagnostics appear at the bottom of the same tab and inspect
+robots behavior. Diagnostics appear at the bottom of the same page and inspect
 the last saved values.
 
 The hostname is derived from the canonical base URL. With Teams enabled,
-settings and public resolution remain Team-isolated. The old `sites` mapping
-and `SiteProfile` records are read-only migration fallbacks for existing
-installations; new installations do not register the resource in Aura.
+settings and public resolution remain Team-isolated.
 
 ## Registering Resources
 
@@ -218,7 +216,7 @@ must have the configured permission slugs.
 
 - `canonical.allow_external` defaults to `false`
 - `canonical.trailing_slash` controls normalized canonical output
-- `settings.*` supplies initial values for the standard SEO settings tab
+- `settings.*` supplies initial values for the standard SEO settings page
 - `fallbacks.*` apply only after record, Resource, and SEO settings values are
   exhausted
 - `routes.*` toggles the sitemap and robots endpoints

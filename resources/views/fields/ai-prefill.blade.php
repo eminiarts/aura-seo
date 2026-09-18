@@ -1,5 +1,8 @@
 @php($prefix = trim((string) ($field['seo_prefix'] ?? 'seo'), '_- '))
 @php($slug = static fn (string $value): string => $prefix === '' ? $value : $prefix.'_'.$value)
+@php($definition = app(\Aura\Seo\Services\SeoRegistry::class)->findFor($this->model))
+@php($titleField = $definition?->titleField() ?? 'title')
+@php($descriptionField = $definition?->descriptionField())
 
 <div
     class="w-full px-4 pb-4"
@@ -20,8 +23,8 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '',
                     },
                     body: JSON.stringify({
-                        title: fields.title || '',
-                        content: fields.content || fields.body || fields.excerpt || '',
+                        title: fields[@js($titleField)] || '',
+                        content: @if ($descriptionField) fields[@js($descriptionField)] || '' @else fields.content || fields.body || fields.excerpt || '' @endif,
                     }),
                 });
                 const payload = await response.json();

@@ -84,7 +84,7 @@ final readonly class SeoDiagnostics
                 if (! $this->sharesOrigin($metadata->canonical, $profile->baseUrl)) {
                     $issues[] = new DiagnosticIssue(
                         'warning',
-                        'Canonical points to another origin and will be excluded from this SiteProfile sitemap.',
+                        'Canonical points to another origin and will be excluded from this SEO settings sitemap.',
                         $definition->key,
                         $record,
                         $metadata->canonical,
@@ -109,7 +109,7 @@ final readonly class SeoDiagnostics
             if ($definition->includesSitemap() && $publicCount === 0) {
                 $issues[] = new DiagnosticIssue(
                     'warning',
-                    'Sitemap source has no public records for the active SiteProfile.',
+                    'Sitemap source has no public records for the active SEO settings profile.',
                     $definition->key,
                 );
             }

@@ -3,43 +3,29 @@
 use Aura\Base\Resources\Team;
 use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Data\SiteProfileData;
-use Aura\Seo\Resources\SiteProfile;
 use Aura\Seo\Services\SeoRegistry;
 use Aura\Seo\Tests\Fixtures\Article;
 
-test('Team-scoped SiteProfiles keep sitemap output isolated per host', function () {
+test('Team-scoped SEO settings keep sitemap output isolated per host', function () {
     $teamA = Team::factory()->create();
     $teamB = Team::factory()->create();
 
-    $profileA = SiteProfile::withoutGlobalScopes()->create([
-        'team_id' => $teamA->id,
-        'fields' => [
-            'canonical_base_url' => 'https://team-a.test',
-            'enabled' => true,
-            'hostname' => 'team-a.test',
-            'robots_follow' => true,
-            'robots_index' => true,
-            'title_template' => '%s | %site%',
-        ],
-        'title' => 'Team A',
-    ]);
-    $profileB = SiteProfile::withoutGlobalScopes()->create([
-        'team_id' => $teamB->id,
-        'fields' => [
-            'canonical_base_url' => 'https://team-b.test',
-            'enabled' => true,
-            'hostname' => 'team-b.test',
-            'robots_follow' => true,
-            'robots_index' => true,
-            'title_template' => '%s | %site%',
-        ],
-        'title' => 'Team B',
-    ]);
-
-    config()->set('aura-seo.sites', [
-        'team-a.test' => ['profile_id' => $profileA->getKey(), 'team_id' => $teamA->id],
-        'team-b.test' => ['profile_id' => $profileB->getKey(), 'team_id' => $teamB->id],
-    ]);
+    createSeoSettings([
+        'seo-canonical-base-url' => 'https://team-a.test',
+        'seo-enabled' => true,
+        'seo-robots-follow' => true,
+        'seo-robots-index' => true,
+        'seo-site-name' => 'Team A',
+        'seo-title-pattern' => '[Post Title] [Separator] [Site Name]',
+    ], $teamA->id);
+    createSeoSettings([
+        'seo-canonical-base-url' => 'https://team-b.test',
+        'seo-enabled' => true,
+        'seo-robots-follow' => true,
+        'seo-robots-index' => true,
+        'seo-site-name' => 'Team B',
+        'seo-title-pattern' => '[Post Title] [Separator] [Site Name]',
+    ], $teamB->id);
 
     app(SeoRegistry::class)->register(
         SeoResourceDefinition::make('articles', Article::class)
