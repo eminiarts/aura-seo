@@ -1,5 +1,6 @@
 <?php
 
+use Aura\Base\Settings\SettingsRegistry;
 use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Data\SiteProfileData;
 use Aura\Seo\Resources\SiteProfile;
@@ -66,7 +67,7 @@ test('diagnostics surface duplicate canonicals and missing descriptions', functi
         ->and(collect($issues)->contains(fn ($issue): bool => $issue->message === 'Duplicate canonical URL shared across multiple public records.'))->toBeTrue();
 });
 
-test('diagnostics stay permission-gated in the admin route and command', function () {
+test('diagnostics are embedded in settings while the command remains permission-aware', function () {
     $profile = diagnosticsProfile();
     registerDiagnosticsDefinition();
 
@@ -87,15 +88,10 @@ test('diagnostics stay permission-gated in the admin route and command', functio
     expect(Gate::forUser($viewer)->denies('aura-seo.diagnose'))->toBeTrue()
         ->and(Gate::forUser($auditor)->allows('aura-seo.diagnose'))->toBeTrue();
 
-    $this->actingAs($viewer)
-        ->get('/admin/seo/diagnostics?host=example.test')
-        ->assertForbidden();
-
-    $this->actingAs($auditor)
-        ->get('/admin/seo/diagnostics?host=example.test')
-        ->assertOk()
-        ->assertSee('Diagnostics')
-        ->assertSee('Duplicate canonical URL shared across multiple public records.');
+    expect(app(SettingsRegistry::class)->has('seo'))->toBeTrue()
+        ->and(collect(app(SettingsRegistry::class)->fields())->contains(
+            fn (array $field): bool => ($field['view'] ?? null) === 'aura-seo::settings.diagnostics',
+        ))->toBeTrue();
 
     $this->artisan('aura-seo:diagnose', ['--host' => 'example.test'])
         ->expectsOutputToContain('Duplicate canonical URL shared across multiple public records.')

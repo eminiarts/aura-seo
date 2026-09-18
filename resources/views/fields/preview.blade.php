@@ -7,7 +7,7 @@
         </div>
     @elseif(!$profile)
         <div class="rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-700">
-            Map an enabled SiteProfile to this host or team to preview the resolved title, description, canonical URL, and social card.
+            Enable and save the SEO settings for this site or team to preview the resolved title, description, canonical URL, and social card.
         </div>
     @else
         @php($metadata = app(\Aura\Seo\Services\MetadataResolver::class)->resolve($this->model, $profile, $definition))

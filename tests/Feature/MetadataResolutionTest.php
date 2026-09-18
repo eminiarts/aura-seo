@@ -53,7 +53,7 @@ test('resolution order is record override then Resource mapping then profile the
 
     $metadata = app(MetadataResolver::class)->resolve($article, seoTestProfile(), $registry->get('articles'));
 
-    expect($metadata->title)->toBe('Record title | Example')
+    expect($metadata->title)->toBe('Record title')
         ->and($metadata->description)->toBe('Record description')
         ->and($metadata->openGraph['og:title'])->toBe('Record social title')
         ->and($metadata->openGraph['og:image'])->toBe('https://example.test/mapped.jpg')
@@ -63,7 +63,7 @@ test('resolution order is record override then Resource mapping then profile the
 
 test('empty values do not emit empty tags and fall through deterministically', function () {
     $article = Article::query()->create([
-        'fields' => ['seo_meta_description' => ' ', 'seo_meta_title' => ''],
+        'fields' => ['seo_meta_description' => ' '],
         'summary' => '',
         'title' => 'Mapped title',
     ])->fresh();
@@ -123,7 +123,7 @@ test('the same deterministic resolver supports Aura custom-table Resources', fun
 
     $metadata = app(MetadataResolver::class)->resolve($page, seoTestProfile(), $definition);
 
-    expect($metadata->title)->toBe('Custom override | Example')
+    expect($metadata->title)->toBe('Custom override')
         ->and($metadata->description)->toBe('Custom summary')
         ->and($metadata->canonical)->toBe('https://example.test/pages/'.$page->getKey());
 });

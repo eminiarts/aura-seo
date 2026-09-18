@@ -2,14 +2,29 @@
 
 return [
     /*
-    | Installing Aura SEO is deliberately inert. A hostname must be mapped to
-    | an enabled SiteProfile and every content Resource must be registered.
+    | Legacy SiteProfile mappings remain readable during migration. New
+    | installations configure one profile per Team in Aura Settings.
     */
     'sites' => [
         // 'www.example.com' => ['profile_id' => 1, 'team_id' => 1],
     ],
 
     'resources' => [],
+
+    'settings' => [
+        'enabled' => false,
+        'site_name' => env('APP_NAME', 'Aura'),
+        'canonical_base_url' => env('APP_URL', 'http://localhost'),
+        'separator' => '|',
+        'title_pattern' => '[Post Title] [Separator] [Site Name]',
+        'default_description' => null,
+        'default_open_graph_image' => null,
+        'default_twitter_image' => null,
+        'locale' => 'en',
+        'robots_index' => false,
+        'robots_follow' => false,
+        'robots_rules' => null,
+    ],
 
     /* Optional callback resolving an Aura Image value to an absolute URL. */
     'image_url_resolver' => null,
@@ -31,7 +46,6 @@ return [
     'routes' => [
         'sitemap' => true,
         'robots' => true,
-        'diagnostics' => true,
     ],
 
     'cache' => [

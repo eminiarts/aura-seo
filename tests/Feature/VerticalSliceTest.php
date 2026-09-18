@@ -42,9 +42,9 @@ test('one Aura Resource persists SEO fields and renders metadata without enterin
 
     expect($article->seo_meta_title)->toBe('A persisted title')
         ->and($article->seo_meta_description)->toBe('A persisted summary.')
-        ->and($metadata->title)->toBe('A persisted title | Example')
+        ->and($metadata->title)->toBe('A persisted title')
         ->and($metadata->canonical)->toBe('https://example.test/articles/'.$article->getKey())
-        ->and($html)->toContain('<title>A persisted title | Example</title>')
+        ->and($html)->toContain('<title>A persisted title</title>')
         ->and($html)->toContain('name="description" content="A persisted summary."')
         ->and($registry->sitemapDefinitions())->toBe([]);
 });

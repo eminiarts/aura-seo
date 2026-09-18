@@ -11,6 +11,7 @@ use Aura\Base\Fields\Tab;
 use Aura\Base\Fields\Text;
 use Aura\Base\Fields\Textarea;
 use Aura\Base\Fields\View;
+use Aura\Seo\Services\SeoDefaults;
 
 final class SeoFieldGroup
 {
@@ -23,6 +24,12 @@ final class SeoFieldGroup
         return [
             self::field('SEO', $slug('tab'), Tab::class, ['global' => true]),
             self::field('Search metadata', $slug('search_panel'), Panel::class, ['style' => ['width' => '50']]),
+            self::field('Pre-fill metadata with AI', $slug('ai_prefill'), View::class, [
+                'global' => true,
+                'on_view' => false,
+                'seo_prefix' => $prefix,
+                'view' => 'aura-seo::fields.ai-prefill',
+            ]),
             self::field('SEO slug', $slug('slug'), Slug::class, [
                 'based_on' => 'title',
                 'custom' => true,
@@ -31,6 +38,7 @@ final class SeoFieldGroup
             ]),
             self::field('Meta title', $slug('meta_title'), Text::class, [
                 'instructions' => 'Recommended maximum: 60 characters.',
+                'set' => static fn ($resource, array $field, mixed $value): mixed => app(SeoDefaults::class)->metaTitle($resource, $value),
                 'validation' => 'nullable|max:60',
             ]),
             self::field('Meta description', $slug('meta_description'), Textarea::class, [

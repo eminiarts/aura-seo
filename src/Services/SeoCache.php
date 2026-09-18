@@ -49,6 +49,7 @@ final class SeoCache
             'global' => $this->version('global'),
             'host' => $profile->hostname,
             'profile' => $profile->id,
+            'profile_hash' => sha1(json_encode($profile, JSON_THROW_ON_ERROR)),
             'profile_version' => $profile->id === null ? 0 : $this->version("profile:{$profile->id}"),
             'segment' => $segment,
             'team' => $profile->teamId,

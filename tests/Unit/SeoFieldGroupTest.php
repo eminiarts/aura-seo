@@ -35,6 +35,7 @@ test('the reusable group provides every documented SEO value with unique prefixe
     expect($slugs->duplicates()->all())->toBe([])
         ->and($slugs->all())->toContain(
             'page_seo_slug',
+            'page_seo_ai_prefill',
             'page_seo_meta_title',
             'page_seo_meta_description',
             'page_seo_canonical_url',

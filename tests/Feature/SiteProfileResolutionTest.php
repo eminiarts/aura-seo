@@ -1,44 +1,36 @@
 <?php
 
 use Aura\Base\Aura;
-use Aura\Base\Fields\Boolean;
-use Aura\Base\Fields\Image;
-use Aura\Base\Fields\Text;
-use Aura\Base\Fields\Textarea;
+use Aura\Base\Resources\Option;
+use Aura\Base\Settings\SettingsRegistry;
 use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Resources\SiteProfile;
 
-test('SiteProfile is a registered editable Aura Resource composed from Aura fields', function () {
-    expect(app(Aura::class)->getResources())->toContain(SiteProfile::class);
-
-    $types = collect(SiteProfile::getFields())->pluck('type')->all();
-
-    expect($types)->toContain(Text::class)
-        ->toContain(Textarea::class)
-        ->toContain(Boolean::class)
-        ->toContain(Image::class);
+test('SEO is a single registered settings page instead of an Aura Resource', function () {
+    expect(app(Aura::class)->getResources())->not->toContain(SiteProfile::class)
+        ->and(app(SettingsRegistry::class)->has('seo'))->toBeTrue();
 });
 
-test('Teams-off hostname mapping resolves only an enabled unscoped profile', function () {
-    $profile = SiteProfile::withoutGlobalScopes()->create([
-        'fields' => [
-            'canonical_base_url' => 'https://example.test',
-            'enabled' => true,
-            'hostname' => 'example.test',
-            'locale' => 'en-GB',
-            'robots_follow' => true,
-            'robots_index' => true,
-            'title_template' => '%s | %site%',
+test('Teams-off hostname resolution reads the single settings record', function () {
+    Option::withoutGlobalScopes()->create([
+        'name' => 'settings',
+        'value' => [
+            'seo-canonical-base-url' => 'https://example.test',
+            'seo-enabled' => true,
+            'seo-locale' => 'en-GB',
+            'seo-robots-follow' => true,
+            'seo-robots-index' => true,
+            'seo-separator' => '|',
+            'seo-site-name' => 'Example',
+            'seo-title-pattern' => '[Post Title] [Separator] [Site Name]',
         ],
-        'title' => 'Example',
     ]);
-
-    config()->set('aura-seo.sites', ['example.test' => ['profile_id' => $profile->getKey()]]);
 
     $resolved = app(SiteProfileResolver::class)->resolve('EXAMPLE.TEST.');
 
-    expect($resolved?->is($profile))->toBeTrue()
-        ->and($resolved?->toSeoData()->locale)->toBe('en-GB')
+    expect($resolved?->hostname)->toBe('example.test')
+        ->and($resolved?->locale)->toBe('en-GB')
+        ->and($resolved?->name)->toBe('Example')
         ->and(app(SiteProfileResolver::class)->resolve('unknown.test'))->toBeNull();
 });
 

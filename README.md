@@ -14,11 +14,11 @@ is not imported or required by production code.
 
 ![Aura SEO movie editor](docs/screenshots/01-movie-editor-seo.png)
 
-### SiteProfile editor
+### SEO settings
 
 ![Aura SEO SiteProfile editor](docs/screenshots/02-site-profile-edit.png)
 
-### Diagnostics
+### Settings diagnostics
 
 ![Aura SEO diagnostics](docs/screenshots/03-diagnostics.png)
 
@@ -28,20 +28,23 @@ is not imported or required by production code.
 
 ## Features
 
-- SiteProfile Aura Resource for hostname, canonical base URL, robots defaults,
-  title templates, locale, and default metadata
+- one SEO settings tab per Team for canonical URL, robots defaults, title
+  patterns, locale, and social-image defaults
 - reusable `SeoFieldGroup` built only from existing Aura fields
 - deterministic metadata resolution order: record override → Resource mapping →
-  SiteProfile → application fallback
+  SEO settings → application fallback
+- automatic new-record titles from `[Post Title] [Separator] [Site Name]`
+- AI-assisted meta title and description generation through Aura's core AI
+  connector
 - canonical URL normalization with fail-closed external canonical rejection by
   default
 - Blade metadata renderer and in-editor search/social previews
 - explicit sitemap registry with chunked XML generation
 - explicit `robots.txt` generation with safe directive sanitization
-- cache reuse plus automatic invalidation on SiteProfile or registered Resource
+- cache reuse plus automatic invalidation on SEO settings or registered Resource
   changes
-- diagnostics page and CLI command for canonical, description, and sitemap
-  coverage
+- diagnostics embedded in the SEO settings tab plus a CLI command for
+  canonical, description, and sitemap coverage
 - Team-aware hostname isolation and permission-aware public boundaries
 - admin gates and permission catalog for SEO management and diagnostics
 
@@ -69,7 +72,7 @@ The package provider is discovered automatically.
 
 Aura SEO is intentionally inert after install:
 
-- no hostname resolves to a `SiteProfile`
+- SEO output is disabled in settings
 - no Aura Resource is public
 - no sitemap source exists
 - unknown hosts receive deny-all `robots.txt`
@@ -77,26 +80,21 @@ Aura SEO is intentionally inert after install:
 
 To expose anything publicly, the host must do two things:
 
-1. map a hostname to an enabled `SiteProfile`
+1. enable SEO and save a canonical base URL under **Settings → SEO**
 2. register each public SEO Resource explicitly
 
-## SiteProfiles
+## SEO settings
 
-`Aura\Seo\Resources\SiteProfile` is a normal Aura Resource. Create one record
-per public site or host. Then map the incoming hostname in
-`config/aura-seo.php`:
+Aura SEO registers a standard settings tab under `/admin/settings`. Each Team
+stores one profile containing its site name, canonical base URL, separator,
+title pattern, default description, Open Graph and Twitter images, locale, and
+robots behavior. Diagnostics appear at the bottom of the same tab and inspect
+the last saved values.
 
-```php
-'sites' => [
-    'www.example.com' => [
-        'profile_id' => 1,
-        'team_id' => 1,
-    ],
-],
-```
-
-With Teams enabled, both the hostname mapping and the resolved record must
-match the active Team identity. Cross-Team resolution fails closed.
+The hostname is derived from the canonical base URL. With Teams enabled,
+settings and public resolution remain Team-isolated. The old `sites` mapping
+and `SiteProfile` records are read-only migration fallbacks for existing
+installations; new installations do not register the resource in Aura.
 
 ## Registering Resources
 
@@ -149,6 +147,8 @@ The field group includes:
 
 - SEO slug
 - meta title and description
+- **Pre-fill with AI**, using the current record title/content and the AI
+  provider configured under **Settings → AI**
 - canonical override
 - robots index/follow toggles
 - Open Graph title, description, and image
@@ -164,7 +164,7 @@ use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Services\MetadataRenderer;
 use Aura\Seo\Services\MetadataResolver;
 
-$profile = app(SiteProfileResolver::class)->resolve(request()->getHost())?->toSeoData();
+$profile = app(SiteProfileResolver::class)->resolve(request()->getHost());
 
 abort_if($profile === null, 404);
 
@@ -188,8 +188,10 @@ When enabled, Aura SEO registers:
 GET /sitemap.xml
 GET /sitemap/{source}-{page}.xml
 GET /robots.txt
-GET /admin/seo/diagnostics
 ```
+
+The authenticated editor also uses `POST /admin/seo/ai-metadata` to request AI
+suggestions. The endpoint is permission-checked and rate-limited.
 
 Important host note: a real `public/robots.txt` file will be served by the web
 server before Laravel sees the request. If you want Aura SEO's generated
@@ -216,9 +218,10 @@ must have the configured permission slugs.
 
 - `canonical.allow_external` defaults to `false`
 - `canonical.trailing_slash` controls normalized canonical output
-- `fallbacks.*` apply only after record, Resource, and SiteProfile values are
+- `settings.*` supplies initial values for the standard SEO settings tab
+- `fallbacks.*` apply only after record, Resource, and SEO settings values are
   exhausted
-- `routes.*` toggles the sitemap, robots, and diagnostics endpoints
+- `routes.*` toggles the sitemap and robots endpoints
 - `cache.ttl` controls sitemap, robots, and metadata cache lifetime
 - `sitemap.chunk_size` controls XML page splitting
 
@@ -231,10 +234,10 @@ field.
 
 Aura SEO was exercised in a live Aura demo installation with:
 
-- a Team-scoped `SiteProfile`
+- Team-scoped SEO settings
 - the reusable `SeoFieldGroup` added to the demo `Movie` Resource
 - a public movie page resolved through `MetadataResolver`
-- working sitemap, robots, diagnostics, and admin screens
+- working sitemap, robots, embedded diagnostics, and admin settings
 
 The live demo check also caught and fixed a preview partial regression where
 plain included Blade views could pass array-style attributes into the preview

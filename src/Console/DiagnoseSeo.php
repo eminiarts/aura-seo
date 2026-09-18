@@ -9,16 +9,16 @@ use Illuminate\Console\Command;
 
 class DiagnoseSeo extends Command
 {
-    protected $signature = 'aura-seo:diagnose {--host= : Public hostname mapped to a SiteProfile}';
+    protected $signature = 'aura-seo:diagnose {--host= : Public hostname configured in Aura SEO settings}';
 
-    protected $description = 'Scan the active Aura SEO SiteProfile for metadata and sitemap issues.';
+    protected $description = 'Scan the active Aura SEO settings profile for metadata and sitemap issues.';
 
     public function handle(SeoDiagnostics $diagnostics, SiteProfileResolver $profiles): int
     {
-        $host = trim((string) ($this->option('host') ?: $this->defaultHost()));
+        $host = trim((string) ($this->option('host') ?: ($profiles->hosts()[0] ?? '')));
 
         if ($host === '') {
-            $this->components->error('No Aura SEO host mapping is configured. Pass --host=example.test after configuring aura-seo.sites.');
+            $this->components->error('No enabled Aura SEO settings profile is configured.');
 
             return self::FAILURE;
         }
@@ -26,12 +26,12 @@ class DiagnoseSeo extends Command
         $profile = $profiles->resolve($host);
 
         if (! $profile) {
-            $this->components->error("No enabled Aura SEO SiteProfile is mapped to [{$host}].");
+            $this->components->error("No enabled Aura SEO settings profile matches [{$host}].");
 
             return self::FAILURE;
         }
 
-        $issues = $diagnostics->scan($profile->toSeoData());
+        $issues = $diagnostics->scan($profile);
         $errors = count(array_filter($issues, fn (DiagnosticIssue $issue): bool => $issue->isError()));
         $warnings = count($issues) - $errors;
 
@@ -50,12 +50,5 @@ class DiagnoseSeo extends Command
         }
 
         return $errors > 0 ? self::FAILURE : self::SUCCESS;
-    }
-
-    private function defaultHost(): ?string
-    {
-        $hosts = array_keys((array) config('aura-seo.sites', []));
-
-        return is_string($hosts[0] ?? null) ? $hosts[0] : null;
     }
 }

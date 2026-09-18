@@ -1,6 +1,6 @@
 <?php
 
-use Aura\Seo\Http\Controllers\DiagnosticsController;
+use Aura\Seo\Http\Controllers\AiMetadataController;
 use Aura\Seo\Http\Controllers\RobotsController;
 use Aura\Seo\Http\Controllers\SitemapIndexController;
 use Aura\Seo\Http\Controllers\SitemapPageController;
@@ -20,12 +20,13 @@ Route::middleware('web')->group(function (): void {
     }
 });
 
-if (config('aura-seo.routes.diagnostics', true)) {
-    Route::domain(config('aura.domain'))
-        ->middleware(config('aura-seo.admin_middleware'))
-        ->prefix(trim(config('aura.path', 'admin'), '/').'/seo')
-        ->name('aura.seo.')
-        ->group(function (): void {
-            Route::get('/diagnostics', DiagnosticsController::class)->name('diagnostics');
-        });
-}
+$adminMiddleware = (array) config('aura-seo.admin_middleware', ['web', 'auth']);
+$adminMiddleware[] = 'throttle:10,1';
+
+Route::domain(config('aura.domain'))
+    ->middleware($adminMiddleware)
+    ->prefix(trim(config('aura.path', 'admin'), '/').'/seo')
+    ->name('aura.seo.')
+    ->group(function (): void {
+        Route::post('/ai-metadata', AiMetadataController::class)->name('ai-metadata');
+    });

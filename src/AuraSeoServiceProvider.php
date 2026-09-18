@@ -4,21 +4,24 @@ namespace Aura\Seo;
 
 use Aura\Base\Aura;
 use Aura\Base\Resources\Team;
+use Aura\Seo\Ai\AiMetadataGenerator;
 use Aura\Seo\Console\DiagnoseSeo;
 use Aura\Seo\Console\SyncSeoPermissions;
 use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Data\SeoResourceDefinition;
-use Aura\Seo\Resources\SiteProfile;
 use Aura\Seo\Services\ConfiguredSiteProfileResolver;
 use Aura\Seo\Services\PreviewSiteProfileResolver;
 use Aura\Seo\Services\RobotsTxtGenerator;
 use Aura\Seo\Services\SeoCache;
 use Aura\Seo\Services\SeoCacheInvalidationRegistrar;
+use Aura\Seo\Services\SeoDefaults;
 use Aura\Seo\Services\SeoDiagnostics;
 use Aura\Seo\Services\SeoPermissionRegistrar;
 use Aura\Seo\Services\SeoRegistry;
 use Aura\Seo\Services\SitemapGenerator;
 use Aura\Seo\Services\SitemapRegistry;
+use Aura\Seo\Services\TitlePatternRenderer;
+use Aura\Seo\Settings\SeoSettingsPage;
 use Aura\Seo\Support\CanonicalUrlNormalizer;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Gate;
@@ -41,19 +44,22 @@ class AuraSeoServiceProvider extends PackageServiceProvider
     public function packageRegistered(): void
     {
         $this->app->singleton(CanonicalUrlNormalizer::class);
+        $this->app->singleton(AiMetadataGenerator::class);
         $this->app->singleton(PreviewSiteProfileResolver::class);
         $this->app->singleton(RobotsTxtGenerator::class);
         $this->app->singleton(SeoCache::class);
         $this->app->singleton(SeoCacheInvalidationRegistrar::class);
         $this->app->singleton(SeoDiagnostics::class);
+        $this->app->singleton(SeoDefaults::class);
         $this->app->singleton(SeoPermissionRegistrar::class);
         $this->app->singleton(SeoRegistry::class);
         $this->app->singleton(SitemapGenerator::class);
         $this->app->singleton(SitemapRegistry::class);
+        $this->app->singleton(TitlePatternRenderer::class);
         $this->app->singleton(SiteProfileResolver::class, ConfiguredSiteProfileResolver::class);
 
         $this->callAfterResolving(Aura::class, function (Aura $aura): void {
-            $aura->registerResources([SiteProfile::class]);
+            $aura->registerSettingsPages('eminiarts/aura-seo', [SeoSettingsPage::make()]);
         });
     }
 

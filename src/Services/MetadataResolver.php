@@ -11,20 +11,27 @@ use InvalidArgumentException;
 
 final readonly class MetadataResolver
 {
-    public function __construct(private CanonicalUrlNormalizer $canonicals, private SeoRegistry $registry) {}
+    public function __construct(
+        private CanonicalUrlNormalizer $canonicals,
+        private SeoRegistry $registry,
+        private TitlePatternRenderer $titles,
+    ) {}
 
     public function resolve(Model $resource, SiteProfileData $profile, ?SeoResourceDefinition $definition = null): ResolvedMetadata
     {
         $definition ??= $this->registry->findFor($resource);
         $public = $profile->enabled && $definition?->hasUrlResolver() && $definition->isPublic($resource, $profile);
 
-        $title = $this->firstString(
-            $this->field($resource, $definition, 'meta_title'),
+        $explicitTitle = $this->firstString($this->field($resource, $definition, 'meta_title'));
+        $title = $explicitTitle ?? $this->firstString(
             $definition?->mappedTitle($resource, $profile),
             $profile->name,
             config('aura-seo.fallbacks.title'),
         );
-        $title = $this->applyTitleTemplate($title, $profile);
+
+        if ($explicitTitle === null) {
+            $title = $this->applyTitleTemplate($title, $profile);
+        }
 
         $description = $this->firstString(
             $this->field($resource, $definition, 'meta_description'),
@@ -40,6 +47,7 @@ final readonly class MetadataResolver
         $image = $this->firstImage(
             $this->field($resource, $definition, 'og_image'),
             $definition?->mappedImage($resource, $profile),
+            $profile->defaultOpenGraphImage,
             $profile->defaultSocialImage,
             config('aura-seo.fallbacks.image'),
         );
@@ -53,7 +61,11 @@ final readonly class MetadataResolver
             'og:type' => 'website',
         ]);
 
-        $twitterImage = $this->firstImage($this->field($resource, $definition, 'twitter_image'), $image);
+        $twitterImage = $this->firstImage(
+            $this->field($resource, $definition, 'twitter_image'),
+            $profile->defaultTwitterImage,
+            $image,
+        );
         $twitter = $this->withoutEmpty([
             'twitter:card' => $this->firstString($this->field($resource, $definition, 'twitter_card'), $twitterImage ? 'summary_large_image' : 'summary'),
             'twitter:title' => $this->firstString($this->field($resource, $definition, 'twitter_title'), $title),
@@ -103,7 +115,7 @@ final readonly class MetadataResolver
             return $title;
         }
 
-        return trim(str_replace(['%site%', '%s'], [$profile->name ?? '', $title], $template));
+        return $this->titles->render($template, $title, $profile->separator, $profile->name);
     }
 
     private function canonical(Model $resource, SiteProfileData $profile, ?SeoResourceDefinition $definition): ?string

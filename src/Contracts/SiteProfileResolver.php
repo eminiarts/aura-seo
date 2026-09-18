@@ -2,9 +2,14 @@
 
 namespace Aura\Seo\Contracts;
 
-use Aura\Seo\Resources\SiteProfile;
+use Aura\Seo\Data\SiteProfileData;
 
 interface SiteProfileResolver
 {
-    public function resolve(string $hostname): ?SiteProfile;
+    /** @return list<string> */
+    public function hosts(): array;
+
+    public function resolve(string $hostname): ?SiteProfileData;
+
+    public function resolveForTeam(?int $teamId): ?SiteProfileData;
 }
