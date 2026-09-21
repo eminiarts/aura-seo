@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
+<body data-screen="record-metadata">
+<main id="prototype-content">
+    <header class="page-header"><div><p class="eyebrow">Movies / Aurora Station / SEO</p><h1>Edit search metadata</h1><p class="lede">Record values override Movie and site defaults. Blank fields continue to inherit the resolved value shown in the preview.</p></div><div class="button-row"><button class="button" type="button">View public page</button><button class="button primary" type="button">Save Movie</button></div></header>
+
+    <div class="notice" style="margin-bottom:16px"><span class="notice-icon">AI</span><div style="flex:1"><strong>Generate a title and description from this Movie</strong><span>The suggestion is reviewed before it changes the form, and nothing is saved automatically.</span></div><a class="button soft" href="06-ai-suggestion.html">Generate suggestion</a></div>
+
+    <div class="grid layout-main">
+        <section class="card"><div class="card-body">
+            <div class="pill-row" style="margin-bottom:20px"><button class="filter-pill active" type="button">Search</button><button class="filter-pill" type="button">Social</button><button class="filter-pill" type="button">Advanced</button></div>
+            <div class="form-section" style="margin-top:0;padding-top:0;border-top:0">
+                <div class="form-section-title"><div><p class="section-label">Search result</p><h2>Title and description</h2></div><span class="badge good">Indexable</span></div>
+                <div class="form-grid">
+                    <div class="field full"><label for="meta-title">Meta title <span class="field-count" id="title-count">0 / 60</span></label><input class="input" id="meta-title" maxlength="60" data-count-target="#title-count" value="Aurora Station - Watch on Aura Demo"><p class="field-help">Overrides the Movie title pattern. Clear the value to inherit.</p></div>
+                    <div class="field full"><label for="meta-description">Meta description <span class="field-count" id="description-count">0 / 160</span></label><textarea class="textarea" id="meta-description" maxlength="160" data-count-target="#description-count">A rescue pilot follows a signal to a silent station above Jupiter in this atmospheric science-fiction mystery.</textarea></div>
+                    <div class="field full"><label for="seo-slug">SEO slug</label><div class="input-prefix"><span>demo.aura-cms.com/movies/</span><input id="seo-slug" value="aurora-station"></div></div>
+                    <div class="field full"><label for="canonical">Canonical URL <span class="badge bad">Needs review</span></label><input class="input" id="canonical" value="https://old-demo.example.com/movies/aurora-station"><p class="field-help" style="color:var(--red)">External canonical URLs are not allowed by the current site policy.</p></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-section-title"><div><p class="section-label">Indexing</p><h2>Search-engine access</h2></div></div>
+                <div class="toggle-row"><div class="toggle-copy"><strong>Allow indexing</strong><span>Inherited from Movies: enabled</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div>
+                <div class="toggle-row"><div class="toggle-copy"><strong>Allow following links</strong><span>Inherited from site defaults: enabled</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div>
+            </div>
+        </div></section>
+
+        <aside class="stack preview-sticky">
+            <section class="card"><div class="card-header"><div><p class="section-label">Resolved output</p><h2>Live preview</h2></div><span class="badge warn">1 issue</span></div><div class="card-body stack">
+                <div class="google-preview"><div class="preview-label">Search preview</div><div class="google-url">demo.aura-cms.com/movies/aurora-station</div><div class="google-title">Aurora Station - Watch on Aura Demo</div><p class="google-description">A rescue pilot follows a signal to a silent station above Jupiter in this atmospheric science-fiction mystery.</p></div>
+                <div class="social-preview"><div class="social-image">AURA SEO</div><div class="social-copy"><div class="preview-label">Social preview</div><strong>Aurora Station - Watch on Aura Demo</strong><p>A rescue pilot follows a signal to a silent station above Jupiter in this atmospheric science-fiction mystery.</p></div></div>
+                <p class="tiny" style="margin:0">Preview only. Search engines and social platforms may display metadata differently.</p>
+            </div></section>
+            <section class="card"><div class="card-body"><p class="section-label">Resolved from</p><div class="action-list" style="margin-top:8px"><div class="action-row"><span class="action-symbol">T</span><div class="action-copy"><strong>Title</strong><span>Record override</span></div><span class="badge blue">Record</span></div><div class="action-row"><span class="action-symbol">D</span><div class="action-copy"><strong>Description</strong><span>Record override</span></div><span class="badge blue">Record</span></div><div class="action-row"><span class="action-symbol">I</span><div class="action-copy"><strong>Social image</strong><span>Site fallback</span></div><span class="badge">Site</span></div></div></div></section>
+        </aside>
+    </div>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>

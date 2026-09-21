@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
+<body data-screen="permissions">
+<main id="prototype-content">
+    <header class="page-header"><div><p class="eyebrow">Authorization</p><h1>SEO permissions</h1><p class="lede">Make the packaged capabilities understandable without replacing Aura's role management. Every operation remains authorized on the server.</p></div><div class="button-row"><button class="button" type="button">Sync permission catalog</button><button class="button primary" type="button">Open role management</button></div></header>
+
+    <div class="notice" style="margin-bottom:16px"><span class="notice-icon">i</span><div><strong>Permissions are assigned through Aura roles</strong><span>This screen explains effective access. It does not create a second role or permission system inside the plugin.</span></div></div>
+
+    <section class="card flush"><div class="card-header"><div><p class="section-label">Effective access</p><h2>Capability matrix</h2></div><span class="badge good">Catalog synchronized</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Capability</th><th class="matrix-cell">Super Admin</th><th class="matrix-cell">SEO Manager</th><th class="matrix-cell">SEO Analyst</th><th class="matrix-cell">Editor</th></tr></thead><tbody>
+        <tr><td><strong>View SEO overview</strong><br><span class="tiny">See public status and summary metrics</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check no">-</span></td></tr>
+        <tr><td><strong>Manage site and Resource defaults</strong><br><span class="tiny">Requires manage-aura-seo</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check no">-</span></td><td class="matrix-cell"><span class="permission-check no">-</span></td></tr>
+        <tr><td><strong>View diagnostics</strong><br><span class="tiny">Requires diagnose-aura-seo or manage-aura-seo</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check no">-</span></td></tr>
+        <tr><td><strong>Apply diagnostic fixes</strong><br><span class="tiny">Also requires permission for the affected Resource</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check limited">!</span></td><td class="matrix-cell"><span class="permission-check no">-</span></td></tr>
+        <tr><td><strong>Edit record metadata</strong><br><span class="tiny">Requires SEO and Resource update access</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check no">-</span></td><td class="matrix-cell"><span class="permission-check limited">!</span></td></tr>
+        <tr><td><strong>Generate AI suggestions</strong><br><span class="tiny">Same access as editing the target fields plus rate limit</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check">&#10003;</span></td><td class="matrix-cell"><span class="permission-check no">-</span></td><td class="matrix-cell"><span class="permission-check limited">!</span></td></tr>
+    </tbody></table></div></section>
+
+    <div class="grid grid-2" style="margin-top:16px">
+        <section class="card"><div class="card-header"><div><p class="section-label">Packaged permission</p><h2>manage-aura-seo</h2></div><span class="badge purple">Mutation</span></div><div class="card-body"><p class="muted">Edit site defaults, Resource overrides, sitemap and robots behavior, and authorized record metadata. This permission implies diagnostic viewing.</p><div class="button-row"><button class="button small" type="button">View 3 assigned roles</button></div></div></section>
+        <section class="card"><div class="card-header"><div><p class="section-label">Packaged permission</p><h2>diagnose-aura-seo</h2></div><span class="badge blue">Read only</span></div><div class="card-body"><p class="muted">View issue details and open affected records. Mutation still requires manage-aura-seo and the target Resource update policy.</p><div class="button-row"><button class="button small" type="button">View 2 assigned roles</button></div></div></section>
+    </div>
+
+    <section class="card" style="margin-top:16px"><div class="card-header"><div><p class="section-label">Current user</p><h2>Demo Admin</h2></div><span class="badge good">Full SEO access</span></div><div class="card-body"><div class="grid grid-3"><div><p class="section-label">Role</p><strong>Super Admin</strong></div><div><p class="section-label">Team</p><strong>Aura Demo</strong></div><div><p class="section-label">Effective access</p><strong>Manage + diagnose</strong></div></div></div></section>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body data-screen="overview">
+<main id="prototype-content">
+    <section class="variant" data-variant="guided">
+        <header class="page-header">
+            <div><p class="eyebrow">Variant A / Guided setup</p><h1>Set up SEO for Aura Demo</h1><p class="lede">A checklist-first experience for a new installation. The next safe action is always clear and public output stays disabled until the required steps are complete.</p></div>
+            <div class="button-row"><button class="button" type="button">View documentation</button><button class="button primary" type="button">Continue setup</button></div>
+        </header>
+
+        <div class="grid layout-main">
+            <section class="card">
+                <div class="card-header"><div><p class="section-label">Setup progress</p><h2>Three of five steps complete</h2></div><span class="badge warn">SEO output paused</span></div>
+                <div class="card-body">
+                    <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+                    <div class="checklist" style="margin-top:14px">
+                        <div class="check-item"><span class="check-icon done">&#10003;</span><div class="check-copy"><strong>Confirm site identity</strong><span>Aura Demo / https://demo.aura-cms.com</span></div><a class="text-link" href="02-site-defaults.html">Review</a></div>
+                        <div class="check-item"><span class="check-icon done">&#10003;</span><div class="check-copy"><strong>Connect public Resources</strong><span>Movies, Actors, and Genres are registered in code</span></div><a class="text-link" href="03-content-types.html">Review</a></div>
+                        <div class="check-item"><span class="check-icon done">&#10003;</span><div class="check-copy"><strong>Choose metadata defaults</strong><span>Title pattern and social defaults are ready</span></div><a class="text-link" href="02-site-defaults.html">Review</a></div>
+                        <div class="check-item"><span class="check-icon next">4</span><div class="check-copy"><strong>Resolve critical diagnostics</strong><span>One canonical issue must be fixed before launch</span></div><a class="text-link" href="07-diagnostics.html">Fix issue</a></div>
+                        <div class="check-item"><span class="check-icon">5</span><div class="check-copy"><strong>Enable SEO output</strong><span>Publishes metadata, sitemap, and robots routes</span></div><button class="button small" disabled type="button">Enable</button></div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="stack">
+                <section class="card"><div class="card-body"><div class="status-line"><span class="status-dot warn"></span><strong>Pre-launch protection is active</strong></div><p class="muted" style="margin:12px 0 0">Search engines receive <span class="mono">noindex, nofollow</span> until setup is complete and SEO output is enabled.</p></div></section>
+                <section class="card"><div class="card-header"><div><p class="section-label">Preview</p><h3>Default title pattern</h3></div></div><div class="card-body"><div class="google-preview"><div class="google-url">demo.aura-cms.com/movies/aurora-station</div><div class="google-title">Aurora Station | Aura Demo</div><p class="google-description">Discover Aurora Station, cast details, reviews, and related films on Aura Demo.</p></div></div></section>
+                <section class="card"><div class="card-body"><div class="button-row"><a class="button soft" href="05-record-metadata.html">Preview a record</a><a class="button" href="09-sitemap-robots.html">Review sitemap</a></div></div></section>
+            </div>
+        </div>
+    </section>
+
+    <section class="variant" data-variant="workspace">
+        <header class="page-header">
+            <div><p class="eyebrow">Variant B / Workspace / Recommended</p><h1>SEO overview</h1><p class="lede">A balanced operations view for established sites: health first, then the specific actions and content types that need attention.</p></div>
+            <div class="button-row"><a class="button" href="07-diagnostics.html">View diagnostics</a><button class="button primary" type="button">Run fresh scan</button></div>
+        </header>
+
+        <div class="metrics">
+            <div class="metric good"><div class="label"><span>SEO health</span><span class="badge good">Good</span></div><strong>92</strong><div class="change">Last scan 8 minutes ago</div></div>
+            <div class="metric bad"><div class="label"><span>Errors</span><span>Critical</span></div><strong>1</strong><div class="change">Canonical mismatch</div></div>
+            <div class="metric warn"><div class="label"><span>Warnings</span><span>Review</span></div><strong>4</strong><div class="change">3 records, 1 site default</div></div>
+            <div class="metric"><div class="label"><span>Indexed records</span><span>Coverage</span></div><strong>148</strong><div class="change">Across 3 content types</div></div>
+        </div>
+
+        <div class="grid layout-main" style="margin-top:16px">
+            <div class="stack">
+                <section class="card">
+                    <div class="card-header"><div><p class="section-label">Needs attention</p><h2>Recommended actions</h2></div><a class="text-link" href="07-diagnostics.html">See all 5 issues</a></div>
+                    <div class="card-body">
+                        <div class="action-list">
+                            <div class="action-row"><span class="action-symbol bad">!</span><div class="action-copy"><strong>Fix the canonical URL for Aurora Station</strong><span>It points to a different host and will be rejected.</span></div><a class="button small" href="08-diagnostic-detail.html">Review</a></div>
+                            <div class="action-row"><span class="action-symbol warn">3</span><div class="action-copy"><strong>Add descriptions to three Movies</strong><span>Use a manual value, inherited default, or an AI suggestion.</span></div><a class="button small" href="07-diagnostics.html">View records</a></div>
+                            <div class="action-row"><span class="action-symbol">i</span><div class="action-copy"><strong>Add a default social image</strong><span>Six records currently fall back to text-only cards.</span></div><a class="button small" href="02-site-defaults.html">Configure</a></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card flush">
+                    <div class="card-header"><div><p class="section-label">Content coverage</p><h2>Registered content types</h2></div><a class="text-link" href="03-content-types.html">Manage content types</a></div>
+                    <div class="card-body table-wrap"><table class="data-table"><thead><tr><th>Resource</th><th>Output</th><th>Sitemap</th><th>Records</th><th>Issues</th></tr></thead><tbody>
+                        <tr><td><div class="resource-cell"><span class="resource-icon">M</span><div><strong>Movies</strong><span>movies</span></div></div></td><td><span class="badge good">Enabled</span></td><td><span class="badge good">Included</span></td><td>124</td><td><span class="badge bad">4</span></td></tr>
+                        <tr><td><div class="resource-cell"><span class="resource-icon">A</span><div><strong>Actors</strong><span>actors</span></div></div></td><td><span class="badge good">Enabled</span></td><td><span class="badge good">Included</span></td><td>21</td><td><span class="badge warn">1</span></td></tr>
+                        <tr><td><div class="resource-cell"><span class="resource-icon">G</span><div><strong>Genres</strong><span>genres</span></div></div></td><td><span class="badge warn">Preview</span></td><td><span class="badge">Excluded</span></td><td>3</td><td><span class="badge good">0</span></td></tr>
+                    </tbody></table></div>
+                </section>
+            </div>
+
+            <div class="stack">
+                <section class="card"><div class="card-header"><div><p class="section-label">Site status</p><h2>Aura Demo</h2></div><span class="badge good">Live</span></div><div class="card-body stack-sm"><div class="status-line"><span class="status-dot good"></span><span>Metadata output enabled</span></div><div class="status-line"><span class="status-dot good"></span><span>Sitemap reachable</span></div><div class="status-line"><span class="status-dot good"></span><span>robots.txt reachable</span></div><div class="status-line"><span class="status-dot warn"></span><span>Social fallback incomplete</span></div></div><div class="card-footer"><a class="text-link" href="02-site-defaults.html">Review site defaults &#8594;</a></div></section>
+                <section class="card"><div class="card-header"><div><p class="section-label">Public surface</p><h3>Search routes</h3></div></div><div class="card-body stack-sm"><div class="action-row"><span class="action-symbol">S</span><div class="action-copy"><strong>/sitemap.xml</strong><span>148 URLs / 3 sources</span></div><span class="badge good">200</span></div><div class="action-row"><span class="action-symbol">R</span><div class="action-copy"><strong>/robots.txt</strong><span>4 generated rules</span></div><span class="badge good">200</span></div></div></section>
+            </div>
+        </div>
+    </section>
+
+    <section class="variant" data-variant="compact">
+        <header class="page-header">
+            <div><p class="eyebrow">Variant C / Compact operations</p><h1>SEO operations</h1><p class="lede">A dense view for experienced administrators who prefer tables and recent activity over onboarding cards.</p></div>
+            <div class="button-row"><button class="button" type="button">Export report</button><button class="button primary" type="button">Run scan</button></div>
+        </header>
+
+        <section class="card compact-summary">
+            <div class="score-ring"><strong>92</strong></div><div class="summary-copy"><h2>Healthy with one blocking issue</h2><p class="muted">Output is live. The next scheduled scan runs in 52 minutes.</p></div><div class="summary-stats"><div class="summary-stat"><strong style="color:var(--red)">1</strong><span>Error</span></div><div class="summary-stat"><strong style="color:var(--amber)">4</strong><span>Warnings</span></div><div class="summary-stat"><strong>148</strong><span>URLs</span></div></div>
+        </section>
+
+        <div class="grid layout-main" style="margin-top:16px">
+            <section class="card flush"><div class="card-header"><div><p class="section-label">Issues by priority</p><h2>Open diagnostics</h2></div><a class="text-link" href="07-diagnostics.html">Open diagnostics</a></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Level</th><th>Issue</th><th>Source</th><th>Updated</th><th></th></tr></thead><tbody>
+                <tr><td><span class="badge bad">Error</span></td><td><strong>External canonical rejected</strong></td><td>Movies / Aurora Station</td><td>8m</td><td><a class="text-link" href="08-diagnostic-detail.html">Fix</a></td></tr>
+                <tr><td><span class="badge warn">Warning</span></td><td><strong>Meta description is missing</strong></td><td>Movies / 3 records</td><td>8m</td><td><a class="text-link" href="07-diagnostics.html">View</a></td></tr>
+                <tr><td><span class="badge warn">Warning</span></td><td><strong>Default social image missing</strong></td><td>Site defaults</td><td>8m</td><td><a class="text-link" href="02-site-defaults.html">Fix</a></td></tr>
+                <tr><td><span class="badge blue">Notice</span></td><td><strong>Genres excluded from sitemap</strong></td><td>Content types</td><td>8m</td><td><a class="text-link" href="03-content-types.html">Review</a></td></tr>
+            </tbody></table></div></section>
+
+            <section class="card"><div class="card-header"><div><p class="section-label">Activity</p><h2>Recent changes</h2></div></div><div class="card-body timeline">
+                <div class="timeline-item"><span class="timeline-dot"></span><div><strong>Movies defaults updated</strong><span>Demo Admin changed the title pattern.</span></div><time>12m</time></div>
+                <div class="timeline-item"><span class="timeline-dot"></span><div><strong>Metadata regenerated</strong><span>Aurora Station search description.</span></div><time>1h</time></div>
+                <div class="timeline-item"><span class="timeline-dot"></span><div><strong>Sitemap cache cleared</strong><span>124 Movie URLs refreshed.</span></div><time>2h</time></div>
+                <div class="timeline-item"><span class="timeline-dot"></span><div><strong>SEO output enabled</strong><span>Site configuration passed validation.</span></div><time>2d</time></div>
+            </div><div class="card-footer"><a class="text-link" href="09-sitemap-robots.html">View public surface &#8594;</a></div></section>
+        </div>
+    </section>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>

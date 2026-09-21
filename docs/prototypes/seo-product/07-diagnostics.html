@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
+<body data-screen="diagnostics">
+<main id="prototype-content">
+    <header class="page-header"><div><p class="eyebrow">Last scan 8 minutes ago</p><h1>SEO diagnostics</h1><p class="lede">Prioritized site and record issues with direct links to the exact place an authorized user can resolve them.</p></div><div class="button-row"><button class="button" type="button">Export report</button><button class="button primary" type="button">Run fresh scan</button></div></header>
+
+    <div class="metrics">
+        <div class="metric good"><div class="label"><span>Health</span><span class="badge good">Good</span></div><strong>92</strong><div class="change">Up 4 since last scan</div></div>
+        <div class="metric bad"><div class="label"><span>Errors</span><span>Blocking</span></div><strong>1</strong><div class="change">Must be reviewed</div></div>
+        <div class="metric warn"><div class="label"><span>Warnings</span><span>Quality</span></div><strong>4</strong><div class="change">Across 3 records</div></div>
+        <div class="metric"><div class="label"><span>Notices</span><span>Optional</span></div><strong>2</strong><div class="change">Configuration advice</div></div>
+    </div>
+
+    <section class="card flush" style="margin-top:16px">
+        <div class="card-header"><div><p class="section-label">Open issues</p><h2>Seven findings</h2></div><div class="pill-row"><button class="filter-pill active" data-filter="all" type="button">All 7</button><button class="filter-pill" data-filter="error" type="button">Errors 1</button><button class="filter-pill" data-filter="warning" type="button">Warnings 4</button><button class="filter-pill" data-filter="notice" type="button">Notices 2</button></div></div>
+        <div class="issue-list">
+            <article class="issue" data-severity="error"><span class="issue-mark bad"></span><div class="issue-copy"><strong>External canonical URL is rejected</strong><span>The record points to a host outside the approved canonical origin.</span></div><div class="issue-source"><strong>Aurora Station</strong><span>Movies / Record #124</span></div><a class="button small" href="08-diagnostic-detail.html">Review fix</a></article>
+            <article class="issue" data-severity="warning"><span class="issue-mark warn"></span><div class="issue-copy"><strong>Meta description is missing</strong><span>Three records will inherit a generic site description.</span></div><div class="issue-source"><strong>3 records</strong><span>Movies</span></div><a class="button small" href="05-record-metadata.html">View records</a></article>
+            <article class="issue" data-severity="warning"><span class="issue-mark warn"></span><div class="issue-copy"><strong>Default social image is missing</strong><span>Six records currently render text-only social cards.</span></div><div class="issue-source"><strong>Site defaults</strong><span>Social metadata</span></div><a class="button small" href="02-site-defaults.html">Configure</a></article>
+            <article class="issue" data-severity="warning"><span class="issue-mark warn"></span><div class="issue-copy"><strong>Title exceeds recommended display length</strong><span>The resolved title contains 68 characters.</span></div><div class="issue-source"><strong>The Last Signal</strong><span>Movies / Record #119</span></div><button class="button small" type="button">Edit record</button></article>
+            <article class="issue" data-severity="warning"><span class="issue-mark warn"></span><div class="issue-copy"><strong>Actor description is missing</strong><span>The record has no mapped biography or manual description.</span></div><div class="issue-source"><strong>Mira Voss</strong><span>Actors / Record #21</span></div><button class="button small" type="button">Edit record</button></article>
+            <article class="issue" data-severity="notice"><span class="issue-mark notice"></span><div class="issue-copy"><strong>Genres are excluded from the sitemap</strong><span>This is allowed, but three public genre pages will not be listed.</span></div><div class="issue-source"><strong>Genres</strong><span>Content types</span></div><a class="button small" href="03-content-types.html">Review</a></article>
+            <article class="issue" data-severity="notice"><span class="issue-mark notice"></span><div class="issue-copy"><strong>Twitter image inherits Open Graph</strong><span>No platform-specific image is configured.</span></div><div class="issue-source"><strong>Site defaults</strong><span>Social metadata</span></div><a class="button small" href="02-site-defaults.html">Review</a></article>
+        </div>
+    </section>
+
+    <div class="notice warn" style="margin-top:16px"><span class="notice-icon">!</span><div><strong>Diagnostics use last-saved settings</strong><span>Save changed settings before running a fresh scan. No diagnostic action modifies content without confirmation.</span></div></div>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>

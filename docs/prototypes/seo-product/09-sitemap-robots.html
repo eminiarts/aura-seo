@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
+<body data-screen="sitemap-robots">
+<main id="prototype-content">
+    <header class="page-header"><div><p class="eyebrow">Public search surface</p><h1>Sitemap &amp; robots</h1><p class="lede">Control route availability, inspect registered sources, and preview exactly what search crawlers can discover.</p></div><div class="button-row"><button class="button" type="button">Clear SEO cache</button><button class="button primary" type="button">Save route settings</button></div></header>
+
+    <div class="grid grid-2">
+        <section class="card"><div class="card-header"><div><p class="section-label">Sitemap</p><h2>/sitemap.xml</h2></div><span class="badge good">200 reachable</span></div><div class="card-body"><div class="toggle-row"><div class="toggle-copy"><strong>Enable sitemap route</strong><span>Publishes visible records from registered sources.</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div><div class="action-list" style="margin-top:10px"><div class="action-row"><span class="action-symbol">#</span><div class="action-copy"><strong>148 URLs</strong><span>Across 2 included sources</span></div><span class="badge good">Fresh</span></div><div class="action-row"><span class="action-symbol">C</span><div class="action-copy"><strong>1 XML chunk</strong><span>Configured limit: 1,000 URLs</span></div><span class="badge">1 / 1</span></div><div class="action-row"><span class="action-symbol">T</span><div class="action-copy"><strong>Last invalidation</strong><span>12 minutes ago after Movie update</span></div><span class="badge">12m</span></div></div></div><div class="card-footer"><div class="button-row"><button class="button small" type="button">Open sitemap</button><button class="button small" type="button">Copy URL</button></div></div></section>
+
+        <section class="card"><div class="card-header"><div><p class="section-label">Robots</p><h2>/robots.txt</h2></div><span class="badge good">200 reachable</span></div><div class="card-body"><div class="toggle-row"><div class="toggle-copy"><strong>Enable generated robots route</strong><span>Requires no physical public/robots.txt file.</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div><div class="code-block" style="margin-top:13px">User-agent: *
+Allow: /
+Disallow: /admin
+
+Sitemap: https://demo.aura-cms.com/sitemap.xml</div><p class="tiny" style="margin:10px 0 0">Generated from saved Team settings. Directives are sanitized before output.</p></div><div class="card-footer"><button class="button small" type="button">Open robots.txt</button></div></section>
+    </div>
+
+    <section class="card flush" style="margin-top:16px"><div class="card-header"><div><p class="section-label">Registered sources</p><h2>Sitemap coverage</h2></div><a class="text-link" href="03-content-types.html">Manage content types</a></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Source</th><th>Registration</th><th>Included</th><th>Visible records</th><th>Estimated chunks</th><th>Last change</th></tr></thead><tbody>
+        <tr><td><div class="resource-cell"><span class="resource-icon">M</span><div><strong>Movies</strong><span>movies</span></div></div></td><td><span class="badge good">Complete</span></td><td><span class="badge good">Yes</span></td><td>124</td><td>1</td><td>12 minutes ago</td></tr>
+        <tr><td><div class="resource-cell"><span class="resource-icon">A</span><div><strong>Actors</strong><span>actors</span></div></div></td><td><span class="badge good">Complete</span></td><td><span class="badge good">Yes</span></td><td>24</td><td>1</td><td>2 hours ago</td></tr>
+        <tr><td><div class="resource-cell"><span class="resource-icon">G</span><div><strong>Genres</strong><span>genres</span></div></div></td><td><span class="badge good">Complete</span></td><td><span class="badge">No</span></td><td>3</td><td>-</td><td>4 days ago</td></tr>
+    </tbody></table></div></section>
+
+    <div class="notice warn" style="margin-top:16px"><span class="notice-icon">!</span><div><strong>Deployment check</strong><span>A physical public/robots.txt file will be served before Laravel. Diagnostics should warn when that file shadows the generated route.</span></div></div>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>

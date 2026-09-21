@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
+<body data-screen="resource-defaults">
+<main id="prototype-content">
+    <header class="page-header"><div><p class="eyebrow">Content types / Movies</p><h1>Movies SEO defaults</h1><p class="lede">Configure safe Team-level defaults for an already registered Resource. Public URLs and visibility rules remain controlled by code.</p></div><div class="button-row"><a class="button" href="03-content-types.html">Back to content types</a><button class="button primary" type="button">Save Movie defaults</button></div></header>
+
+    <div class="grid layout-main">
+        <section class="card"><div class="card-body">
+            <div class="form-section" style="margin-top:0;padding-top:0;border-top:0">
+                <div class="form-section-title"><div><p class="section-label">Exposure</p><h2>Output and sitemap</h2></div><span class="badge good">Registration complete</span></div>
+                <div class="toggle-row"><div class="toggle-copy"><strong>Enable SEO output for Movies</strong><span>Allows resolved metadata for records that pass the code-defined visibility predicate.</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div>
+                <div class="toggle-row"><div class="toggle-copy"><strong>Include visible Movies in sitemap</strong><span>Uses the registered query and record visibility check. Currently 124 records.</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title"><div><p class="section-label">Presentation</p><h2>Movie defaults</h2><p class="tiny">Leave a value blank to inherit the site default.</p></div></div>
+                <div class="form-grid">
+                    <div class="field full"><label for="movie-pattern">Title pattern <span class="badge blue">Overrides site</span></label><input class="input" id="movie-pattern" value="[Post Title] - Watch on [Site Name]"><p class="field-help">Resolved example: Aurora Station - Watch on Aura Demo</p></div>
+                    <div class="field full"><label for="movie-description">Default description <span class="field-count">Inherited when blank</span></label><textarea class="textarea" id="movie-description" placeholder="Inherit the site default..."></textarea></div>
+                    <div class="field"><label for="movie-robots">Default robots</label><select class="select" id="movie-robots"><option>Inherit site default</option><option>Index and follow</option><option>No index, follow</option></select></div>
+                    <div class="field"><label for="movie-social">Social image</label><select class="select" id="movie-social"><option>Use mapped poster, then site fallback</option><option>Always use site fallback</option></select></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title"><div><p class="section-label">Registered mappings</p><h2>Read-only developer configuration</h2><p class="tiny">These values are shown for clarity but can only be changed in application code.</p></div></div>
+                <div class="form-grid">
+                    <div class="field"><label>Title field</label><input class="input mono" readonly value="title"></div>
+                    <div class="field"><label>Description field</label><input class="input mono" readonly value="synopsis"></div>
+                    <div class="field"><label>Image field</label><input class="input mono" readonly value="poster"></div>
+                    <div class="field"><label>Last modified</label><input class="input mono" readonly value="updated_at"></div>
+                </div>
+            </div>
+        </div></section>
+
+        <aside class="stack preview-sticky">
+            <section class="card"><div class="card-header"><div><p class="section-label">Resolution example</p><h2>Aurora Station</h2></div><span class="badge purple">Movie</span></div><div class="card-body"><div class="inheritance">
+                <div class="inheritance-row"><span class="inheritance-index">1</span><div class="inheritance-copy"><strong>Record override</strong><span>No manual meta title</span></div><span class="badge">Empty</span></div>
+                <div class="inheritance-row active"><span class="inheritance-index">2</span><div class="inheritance-copy"><strong>Movie default</strong><span>[Post Title] - Watch on [Site Name]</span></div><span class="badge blue">Used</span></div>
+                <div class="inheritance-row"><span class="inheritance-index">3</span><div class="inheritance-copy"><strong>Site default</strong><span>[Post Title] | [Site Name]</span></div><span class="badge">Skipped</span></div>
+                <div class="inheritance-row"><span class="inheritance-index">4</span><div class="inheritance-copy"><strong>Application fallback</strong><span>Aura Demo</span></div><span class="badge">Skipped</span></div>
+            </div></div></section>
+            <section class="card"><div class="card-header"><div><p class="section-label">Resolved preview</p><h3>Search result</h3></div></div><div class="card-body"><div class="google-preview"><div class="google-url">demo.aura-cms.com/movies/aurora-station</div><div class="google-title">Aurora Station - Watch on Aura Demo</div><p class="google-description">When a research station goes silent above Jupiter, a rescue pilot follows a faint signal into a settlement that should not exist.</p></div></div></section>
+        </aside>
+    </div>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>

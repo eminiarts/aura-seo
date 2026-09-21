@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
+<body data-screen="site-defaults">
+<main id="prototype-content">
+    <header class="page-header"><div><p class="eyebrow">Team-scoped settings</p><h1>Site defaults</h1><p class="lede">Define the identity and fallback metadata inherited by registered Resources and records for the current Team.</p></div><div class="button-row"><button class="button" type="button">Discard changes</button><button class="button primary" type="button">Save defaults</button></div></header>
+
+    <div class="grid layout-main">
+        <section class="card"><div class="card-body">
+            <div class="form-section" style="margin-top:0;padding-top:0;border-top:0">
+                <div class="form-section-title"><div><p class="section-label">Site identity</p><h2>Public site information</h2><p class="tiny">Used in canonical URLs, generated titles, and previews.</p></div><span class="badge good">Output enabled</span></div>
+                <div class="form-grid">
+                    <div class="field"><label for="site-name">Site name</label><input class="input" id="site-name" value="Aura Demo"></div>
+                    <div class="field"><label for="locale">Locale</label><select class="select" id="locale"><option>English (en)</option><option>German (de)</option></select></div>
+                    <div class="field full"><label for="base-url">Canonical base URL</label><input class="input" id="base-url" value="https://demo.aura-cms.com"><p class="field-help">Only HTTP(S) origins are accepted. The hostname is derived automatically.</p></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title"><div><p class="section-label">Search defaults</p><h2>Titles and descriptions</h2><p class="tiny">Blank record fields inherit these values.</p></div></div>
+                <div class="form-grid">
+                    <div class="field full"><label for="title-pattern">SEO title pattern <span class="field-count">Live preview at right</span></label><input class="input" id="title-pattern" value="[Post Title] [Separator] [Site Name]"><p class="field-help">Available tokens: [Post Title], [Separator], [Site Name]</p></div>
+                    <div class="field"><label for="separator">Title separator</label><select class="select" id="separator"><option>| (vertical bar)</option><option>- (hyphen)</option><option>· (middle dot)</option></select></div>
+                    <div class="field"><label for="index-default">Default robots</label><select class="select" id="index-default"><option>Index and follow</option><option>No index, follow</option><option>No index, no follow</option></select></div>
+                    <div class="field full"><label for="description">Default description <span class="field-count">124 / 160</span></label><textarea class="textarea" id="description">Discover featured movies, cast information, reviews, and curated collections powered by the Aura CMS demonstration site.</textarea></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title"><div><p class="section-label">Social defaults</p><h2>Fallback share images</h2><p class="tiny">Resource or record images override these fallbacks.</p></div></div>
+                <div class="form-grid">
+                    <div class="field"><label>Open Graph image</label><div class="image-picker"><span class="image-placeholder">OG</span><div><strong>Choose an image</strong><div class="tiny">Recommended 1200 x 630</div></div></div></div>
+                    <div class="field"><label>Twitter image</label><div class="image-picker"><span class="image-placeholder">X</span><div><strong>Use Open Graph image</strong><div class="tiny">Or choose a platform override</div></div></div></div>
+                </div>
+            </div>
+        </div></section>
+
+        <aside class="stack preview-sticky">
+            <section class="card"><div class="card-header"><div><p class="section-label">Resolved example</p><h2>Title pattern preview</h2></div><span class="badge blue">Inherited</span></div><div class="card-body"><div class="google-preview"><div class="google-url">demo.aura-cms.com/movies/aurora-station</div><div class="google-title">Aurora Station | Aura Demo</div><p class="google-description">Discover featured movies, cast information, reviews, and curated collections powered by the Aura CMS demonstration site.</p></div><p class="tiny" style="margin:10px 0 0">Examples use a sample Movie. Search engines may display metadata differently.</p></div></section>
+            <section class="card"><div class="card-header"><div><p class="section-label">Safety</p><h3>Public output</h3></div></div><div class="card-body"><div class="toggle-row"><div class="toggle-copy"><strong>Enable SEO output</strong><span>Metadata, sitemap, and robots responses</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div><div class="notice warn" style="margin-top:12px"><span class="notice-icon">!</span><div><strong>Unsaved changes</strong><span>Diagnostics continue using the last saved values.</span></div></div></div></section>
+        </aside>
+    </div>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>

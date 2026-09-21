@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
+<body data-screen="ai-suggestion">
+<main id="prototype-content">
+    <header class="page-header"><div><p class="eyebrow">Movies / Aurora Station / AI assistance</p><h1>Review AI metadata suggestion</h1><p class="lede">Aura uses the saved core AI connection. Suggestions never save automatically and current values remain available for comparison.</p></div><div class="button-row"><a class="button" href="05-record-metadata.html">Cancel</a><button class="button" data-ai-generate type="button">Generate another</button></div></header>
+
+    <div class="notice good" style="margin-bottom:16px"><span class="notice-icon">&#10003;</span><div><strong data-ai-state>Suggestion ready - nothing has been saved</strong><span>Generated from the current title, synopsis, site name, locale, and length rules.</span></div></div>
+
+    <section class="card"><div class="card-header"><div><p class="section-label">Compare</p><h2>Current metadata and suggestion</h2></div><span class="badge purple">Powered by Aura AI</span></div><div class="card-body">
+        <div class="ai-layout">
+            <article class="ai-column"><p class="section-label">Current form values</p><h3>Aurora Station - Watch on Aura Demo</h3><p class="muted">A rescue pilot follows a signal to a silent station above Jupiter in this atmospheric science-fiction mystery.</p><div class="tiny">Title: 35 / 60 &nbsp; Description: 116 / 160</div></article>
+            <article class="ai-column suggestion" data-ai-result><p class="section-label">Suggested values</p><label class="selection"><input type="checkbox" checked><span><strong>Aurora Station: A Mystery Above Jupiter | Aura Demo</strong><span>Title: 51 / 60 - Adds the central premise while retaining the site name.</span></span></label><label class="selection"><input type="checkbox" checked><span><strong>A rescue pilot investigates a silent research station above Jupiter and discovers a settlement that should not exist.</strong><span>Description: 117 / 160 - Uses active language and the main story hook.</span></span></label></article>
+        </div>
+    </div><div class="card-footer"><div class="button-row" style="justify-content:flex-end"><a class="button" href="05-record-metadata.html">Keep current values</a><button class="button primary" data-ai-apply type="button">Apply selected to form</button></div></div></section>
+
+    <div class="grid grid-3" style="margin-top:16px">
+        <section class="card"><div class="card-body"><p class="section-label">Input</p><h3>Scoped record context</h3><p class="muted">Movie title, mapped synopsis, site name, locale, and existing metadata only.</p></div></section>
+        <section class="card"><div class="card-body"><p class="section-label">Control</p><h3>Selective apply</h3><p class="muted">Apply the title, description, both, or neither. The normal Save action persists changes.</p></div></section>
+        <section class="card"><div class="card-body"><p class="section-label">Fallback</p><h3>Manual editing remains</h3><p class="muted">Provider errors do not change the form or block manual metadata editing.</p></div></section>
+    </div>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>

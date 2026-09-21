@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
+<body data-screen="diagnostic-detail">
+<main id="prototype-content">
+    <header class="page-header"><div><p class="eyebrow">Diagnostics / Error SEO-001</p><h1>External canonical URL is rejected</h1><p class="lede">Review the affected record, understand why the URL is unsafe, and choose an explicit correction.</p></div><div class="button-row"><a class="button" href="07-diagnostics.html">Back to diagnostics</a><a class="button primary" href="05-record-metadata.html">Edit Aurora Station</a></div></header>
+
+    <section class="card detail-hero"><div class="card-header" style="padding:0"><div><span class="badge bad">Error</span><h2 style="margin-top:10px">The canonical points outside the approved site</h2><p class="muted">Aura SEO rejected the override and currently resolves the safe internal canonical URL instead.</p><div class="detail-meta"><span class="badge">Movies</span><span class="badge">Record #124</span><span class="badge">Aurora Station</span><span class="badge">Found 8 minutes ago</span></div></div></div></section>
+
+    <div class="grid layout-main" style="margin-top:16px">
+        <div class="stack">
+            <section class="card"><div class="card-header"><div><p class="section-label">Recommendation</p><h2>Use the generated internal canonical</h2></div><span class="badge good">Safe fix</span></div><div class="card-body"><div class="diff"><div class="diff-card before"><p class="section-label">Current override</p><p class="mono tiny">https://old-demo.example.com/movies/aurora-station</p><span class="badge bad">Rejected</span></div><div class="diff-card after"><p class="section-label">Resolved canonical</p><p class="mono tiny">https://demo.aura-cms.com/movies/aurora-station</p><span class="badge good">Allowed</span></div></div><div class="notice" style="margin-top:14px"><span class="notice-icon">i</span><div><strong>Suggested action</strong><span>Clear the record override so it inherits the generated canonical. The public URL does not change.</span></div></div></div><div class="card-footer"><div class="button-row" style="justify-content:flex-end"><a class="button" href="05-record-metadata.html">Review record</a><button class="button primary" type="button">Clear override after confirmation</button></div></div></section>
+
+            <section class="card"><div class="card-header"><div><p class="section-label">What happens next</p><h2>Safe resolution flow</h2></div></div><div class="card-body steps"><div class="step"><div><strong>Open the affected record</strong><span>The canonical field is highlighted and the current value remains visible.</span></div></div><div class="step"><div><strong>Clear or replace the override</strong><span>Aura validates the URL against the site's external-canonical policy.</span></div></div><div class="step"><div><strong>Save the normal Resource form</strong><span>No diagnostic action bypasses Resource authorization or validation.</span></div></div><div class="step"><div><strong>Run diagnostics again</strong><span>The issue closes when the saved record resolves to an allowed canonical.</span></div></div></div></section>
+        </div>
+
+        <aside class="stack">
+            <section class="card"><div class="card-header"><div><p class="section-label">Policy context</p><h2>Canonical rules</h2></div></div><div class="card-body stack-sm"><div class="action-row"><span class="action-symbol">H</span><div class="action-copy"><strong>Approved host</strong><span>demo.aura-cms.com</span></div><span class="badge good">Active</span></div><div class="action-row"><span class="action-symbol">E</span><div class="action-copy"><strong>External URLs</strong><span>Disabled by configuration</span></div><span class="badge">Blocked</span></div><div class="action-row"><span class="action-symbol">/</span><div class="action-copy"><strong>Trailing slash</strong><span>Removed during normalization</span></div><span class="badge">Off</span></div></div></section>
+            <section class="card"><div class="card-header"><div><p class="section-label">Resolved output</p><h3>Current public tag</h3></div></div><div class="card-body"><div class="code-block">&lt;link rel="canonical"
+  href="https://demo.aura-cms.com/movies/aurora-station"&gt;</div><p class="tiny" style="margin:10px 0 0">The unsafe override is not emitted while this issue is open.</p></div></section>
+        </aside>
+    </div>
+</main>
+<script src="assets/prototype.js"></script>
+</body>
+</html>
