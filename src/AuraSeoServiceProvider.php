@@ -30,6 +30,8 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class AuraSeoServiceProvider extends PackageServiceProvider
 {
+    private bool $configuredResourcesRegistered = false;
+
     public function configurePackage(Package $package): void
     {
         $package
@@ -59,17 +61,20 @@ class AuraSeoServiceProvider extends PackageServiceProvider
         $this->app->singleton(SiteProfileResolver::class, ConfiguredSiteProfileResolver::class);
 
         $this->callAfterResolving(Aura::class, function (Aura $aura): void {
-            $aura->registerSettingsPages('eminiarts/aura-seo', [SeoSettingsPage::make()]);
+            $this->registerConfiguredResources();
+            $aura->registerSettingsPages('eminiarts/aura-seo', [
+                SeoSettingsPage::make($this->app->make(SeoRegistry::class)),
+            ]);
         });
     }
 
     public function packageBooted(): void
     {
+        $this->registerConfiguredResources();
         $this->registerGates();
         $this->registerPermissionCatalog();
 
         $this->app->booted(function (): void {
-            $this->registerConfiguredResources();
             $this->app->make(SeoCacheInvalidationRegistrar::class)->register();
         });
     }
@@ -88,6 +93,11 @@ class AuraSeoServiceProvider extends PackageServiceProvider
 
     private function registerConfiguredResources(): void
     {
+        if ($this->configuredResourcesRegistered) {
+            return;
+        }
+
+        $this->configuredResourcesRegistered = true;
         $registry = $this->app->make(SeoRegistry::class);
         $configured = config('aura-seo.resources', []);
         $configured = is_callable($configured) ? $this->app->call($configured) : $configured;

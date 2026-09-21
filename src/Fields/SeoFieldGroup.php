@@ -23,9 +23,8 @@ final class SeoFieldGroup
 
         return [
             self::field('SEO', $slug('tab'), Tab::class, ['global' => true]),
-            self::field('Search metadata', $slug('search_panel'), Panel::class, ['style' => ['width' => '50']]),
-            self::field('Pre-fill metadata with AI', $slug('ai_prefill'), View::class, [
-                'global' => true,
+            self::field('Search', $slug('search_panel'), Panel::class),
+            self::field('AI suggestion', $slug('ai_prefill'), View::class, [
                 'on_view' => false,
                 'seo_prefix' => $prefix,
                 'view' => 'aura-seo::fields.ai-prefill',
@@ -49,15 +48,28 @@ final class SeoFieldGroup
                 'instructions' => 'Absolute or site-relative canonical URL.',
                 'validation' => 'nullable|max:2048',
             ]),
-            self::field('Allow indexing', $slug('index'), Boolean::class, ['default' => true]),
-            self::field('Allow following links', $slug('follow'), Boolean::class, ['default' => true]),
-            self::field('Social metadata', $slug('social_panel'), Panel::class, ['style' => ['width' => '50']]),
+            self::field('Social sharing', $slug('social_panel'), Panel::class),
             self::field('Open Graph title', $slug('og_title'), Text::class, ['validation' => 'nullable|max:95']),
             self::field('Open Graph description', $slug('og_description'), Textarea::class, ['validation' => 'nullable|max:200']),
-            self::field('Open Graph image', $slug('og_image'), Image::class, ['max_files' => 1]),
+            self::field('Open Graph image', $slug('og_image'), Image::class, [
+                'max_files' => 1,
+                'style' => ['width' => '50'],
+            ]),
             self::field('Twitter title', $slug('twitter_title'), Text::class, ['validation' => 'nullable|max:70']),
             self::field('Twitter description', $slug('twitter_description'), Textarea::class, ['validation' => 'nullable|max:200']),
-            self::field('Twitter image', $slug('twitter_image'), Image::class, ['max_files' => 1]),
+            self::field('Twitter image', $slug('twitter_image'), Image::class, [
+                'max_files' => 1,
+                'style' => ['width' => '50'],
+            ]),
+            self::field('Advanced', $slug('advanced_panel'), Panel::class),
+            self::field('Allow indexing', $slug('index'), Boolean::class, [
+                'default' => true,
+                'style' => ['width' => '50'],
+            ]),
+            self::field('Allow following links', $slug('follow'), Boolean::class, [
+                'default' => true,
+                'style' => ['width' => '50'],
+            ]),
             self::field('Twitter card', $slug('twitter_card'), Select::class, [
                 'default' => 'summary_large_image',
                 'options' => [
@@ -65,10 +77,9 @@ final class SeoFieldGroup
                     'summary_large_image' => 'Summary with large image',
                 ],
             ]),
-            self::field('Preview', $slug('preview_panel'), Panel::class, ['style' => ['width' => '100']]),
-            self::field('Resolved preview', $slug('preview'), View::class, [
-                'global' => true,
-                'instructions' => 'Preview uses the first enabled SEO settings profile for this team and Resource.',
+            self::field('Preview', $slug('preview_panel'), Panel::class),
+            self::field('Search and social preview', $slug('preview'), View::class, [
+                'instructions' => 'Search engines and social platforms may display content differently.',
                 'on_view' => false,
                 'validation' => '',
                 'view' => 'aura-seo::fields.preview',

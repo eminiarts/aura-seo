@@ -17,11 +17,11 @@ class SeoPermissionRegistrar
         return [
             (string) config('aura-seo.permissions.manage', 'manage-aura-seo') => [
                 'name' => 'Manage Aura SEO',
-                'description' => 'Manage Aura SEO settings, profiles, and public metadata behavior.',
+                'description' => 'Change SEO settings and record metadata.',
             ],
             (string) config('aura-seo.permissions.diagnose', 'diagnose-aura-seo') => [
-                'name' => 'Diagnose Aura SEO',
-                'description' => 'Inspect Aura SEO diagnostics, sitemap coverage, and public metadata issues.',
+                'name' => 'View Aura SEO checks',
+                'description' => 'Review SEO issues and open affected content.',
             ],
         ];
     }

@@ -16,6 +16,8 @@ return [
         'robots_index' => false,
         'robots_follow' => false,
         'robots_rules' => null,
+        'sitemap_enabled' => true,
+        'robots_route_enabled' => true,
     ],
 
     /* Optional callback resolving an Aura Image value to an absolute URL. */

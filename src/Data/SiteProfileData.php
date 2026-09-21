@@ -4,6 +4,7 @@ namespace Aura\Seo\Data;
 
 final readonly class SiteProfileData
 {
+    /** @param array<string, SeoResourceDefaults> $resourceDefaults */
     public function __construct(
         public string $baseUrl,
         public bool $enabled,
@@ -20,7 +21,17 @@ final readonly class SiteProfileData
         public string $separator = '|',
         public ?int $teamId = null,
         public string $titleTemplate = '[Post Title] [Separator] [Site Name]',
+        public bool $sitemapEnabled = true,
+        public bool $robotsEnabled = true,
+        public array $resourceDefaults = [],
     ) {}
+
+    public function defaultsFor(SeoResourceDefinition $definition): SeoResourceDefaults
+    {
+        return $this->resourceDefaults[$definition->key] ?? new SeoResourceDefaults(
+            sitemap: $definition->includesSitemap(),
+        );
+    }
 
     public function __get(string $name): mixed
     {

@@ -28,6 +28,10 @@ final readonly class SitemapGenerator
             $writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 
             foreach ($this->registry->all() as $definition) {
+                if (! $profile->defaultsFor($definition)->sitemap) {
+                    continue;
+                }
+
                 foreach (array_keys($this->chunksFor($definition, $profile)) as $pageIndex) {
                     $page = $pageIndex + 1;
                     $entries = $this->entriesFor($definition, $profile);
@@ -95,6 +99,10 @@ final readonly class SitemapGenerator
     /** @return array<int, array<int, array{loc: string, lastmod: string|null}>> */
     private function chunksFor(SeoResourceDefinition $definition, SiteProfileData $profile): array
     {
+        if (! $profile->defaultsFor($definition)->sitemap) {
+            return [];
+        }
+
         $size = max(1, (int) config('aura-seo.sitemap.chunk_size', 1000));
 
         return array_values(array_chunk($this->entriesFor($definition, $profile), $size));
