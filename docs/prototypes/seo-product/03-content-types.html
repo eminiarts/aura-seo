@@ -3,24 +3,18 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
 <body data-screen="content-types">
 <main id="prototype-content">
-    <header class="page-header"><div><p class="eyebrow">Registered Resources</p><h1>Content types</h1><p class="lede">Only Resources explicitly registered in application code appear here. Administrators can adjust safe Team defaults without changing public-boundary callbacks.</p></div><div class="button-row"><button class="button" type="button">Developer guide</button><button class="button primary" type="button">Refresh registration</button></div></header>
+    <header class="page-header"><div><p class="eyebrow">SEO settings</p><h1>Content types</h1><p class="lede">Choose how each available content type appears in search results and social sharing.</p></div></header>
 
-    <div class="notice good" style="margin-bottom:16px"><span class="notice-icon">&#10003;</span><div><strong>Three Resources registered safely</strong><span>Every public Resource has both an enumeration query and a record-level visibility predicate.</span></div></div>
+    <div class="notice good" style="margin-bottom:16px"><span class="notice-icon">&#10003;</span><div><strong>Three content types are available</strong><span>Two are included in SEO output and the sitemap.</span></div></div>
 
     <section class="card flush">
-        <div class="card-header"><div><p class="section-label">Current Team</p><h2>SEO Resource coverage</h2></div><div class="pill-row"><button class="filter-pill active" type="button">All 3</button><button class="filter-pill" type="button">Enabled 2</button><button class="filter-pill" type="button">Needs review 1</button></div></div>
+        <div class="card-header"><div><p class="section-label">Available content</p><h2>Content type overview</h2></div><div class="pill-row"><button class="filter-pill active" type="button">All 3</button><button class="filter-pill" type="button">Enabled 2</button><button class="filter-pill" type="button">Needs review 1</button></div></div>
         <div class="table-wrap"><table class="data-table"><thead><tr><th>Resource</th><th>SEO output</th><th>Sitemap</th><th>Title source</th><th>Description source</th><th>Records</th><th></th></tr></thead><tbody>
-            <tr><td><div class="resource-cell"><span class="resource-icon">M</span><div><strong>Movies</strong><span>App\Aura\Resources\Movie</span></div></div></td><td><span class="badge good">Enabled</span></td><td><span class="badge good">Included</span></td><td><span class="mono tiny">title</span></td><td><span class="mono tiny">synopsis</span></td><td><strong>124</strong><br><span class="tiny">4 issues</span></td><td><a class="button small" href="04-resource-defaults.html">Configure</a></td></tr>
-            <tr><td><div class="resource-cell"><span class="resource-icon">A</span><div><strong>Actors</strong><span>App\Aura\Resources\Actor</span></div></div></td><td><span class="badge good">Enabled</span></td><td><span class="badge good">Included</span></td><td><span class="mono tiny">name</span></td><td><span class="mono tiny">biography</span></td><td><strong>21</strong><br><span class="tiny">1 issue</span></td><td><button class="button small" type="button">Configure</button></td></tr>
-            <tr><td><div class="resource-cell"><span class="resource-icon">G</span><div><strong>Genres</strong><span>App\Aura\Resources\Genre</span></div></div></td><td><span class="badge warn">Preview only</span></td><td><span class="badge">Excluded</span></td><td><span class="mono tiny">name</span></td><td><span class="mono tiny">description</span></td><td><strong>3</strong><br><span class="tiny">No issues</span></td><td><button class="button small" type="button">Configure</button></td></tr>
+            <tr><td><div class="resource-cell"><span class="resource-icon">M</span><div><strong>Movies</strong><span>124 records</span></div></div></td><td><span class="badge good">Enabled</span></td><td><span class="badge good">Included</span></td><td>Title</td><td>Synopsis</td><td><strong>124</strong><br><span class="tiny">4 issues</span></td><td><a class="button small" href="04-resource-defaults.html">Configure</a></td></tr>
+            <tr><td><div class="resource-cell"><span class="resource-icon">A</span><div><strong>Actors</strong><span>21 records</span></div></div></td><td><span class="badge good">Enabled</span></td><td><span class="badge good">Included</span></td><td>Name</td><td>Biography</td><td><strong>21</strong><br><span class="tiny">1 issue</span></td><td><button class="button small" type="button">Configure</button></td></tr>
+            <tr><td><div class="resource-cell"><span class="resource-icon">G</span><div><strong>Genres</strong><span>3 records</span></div></div></td><td><span class="badge warn">Preview only</span></td><td><span class="badge">Excluded</span></td><td>Name</td><td>Description</td><td><strong>3</strong><br><span class="tiny">No issues</span></td><td><button class="button small" type="button">Configure</button></td></tr>
         </tbody></table></div>
     </section>
-
-    <div class="grid grid-3" style="margin-top:16px">
-        <section class="card"><div class="card-body"><p class="section-label">Code owns</p><h3>Public security boundary</h3><p class="muted">URLs, enumeration queries, record visibility, and field mappings remain defined by developers.</p></div></section>
-        <section class="card"><div class="card-body"><p class="section-label">Team owns</p><h3>Presentation defaults</h3><p class="muted">Output toggle, sitemap inclusion, title pattern, descriptions, images, and robots defaults.</p></div></section>
-        <section class="card"><div class="card-body"><p class="section-label">Record owns</p><h3>Specific overrides</h3><p class="muted">Editors can override metadata for one record without changing Resource or site defaults.</p></div></section>
-    </div>
 </main>
 <script src="assets/prototype.js"></script>
 </body>

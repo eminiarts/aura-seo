@@ -3,7 +3,7 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"></head>
 <body data-screen="site-defaults">
 <main id="prototype-content">
-    <header class="page-header"><div><p class="eyebrow">Team-scoped settings</p><h1>Site defaults</h1><p class="lede">Define the identity and fallback metadata inherited by registered Resources and records for the current Team.</p></div><div class="button-row"><button class="button" type="button">Discard changes</button><button class="button primary" type="button">Save defaults</button></div></header>
+    <header class="page-header"><div><p class="eyebrow">SEO settings</p><h1>Site defaults</h1><p class="lede">Set the site information used when content does not have its own SEO title, description, or image.</p></div><div class="button-row"><button class="button" type="button">Discard changes</button><button class="button primary" type="button">Save defaults</button></div></header>
 
     <div class="grid layout-main">
         <section class="card"><div class="card-body">
@@ -12,7 +12,7 @@
                 <div class="form-grid">
                     <div class="field"><label for="site-name">Site name</label><input class="input" id="site-name" value="Aura Demo"></div>
                     <div class="field"><label for="locale">Locale</label><select class="select" id="locale"><option>English (en)</option><option>German (de)</option></select></div>
-                    <div class="field full"><label for="base-url">Canonical base URL</label><input class="input" id="base-url" value="https://demo.aura-cms.com"><p class="field-help">Only HTTP(S) origins are accepted. The hostname is derived automatically.</p></div>
+                    <div class="field full"><label for="base-url">Site URL</label><input class="input" id="base-url" value="https://demo.aura-cms.com"><p class="field-help">Enter the full address, including https://.</p></div>
                 </div>
             </div>
 
@@ -37,7 +37,7 @@
 
         <aside class="stack preview-sticky">
             <section class="card"><div class="card-header"><div><p class="section-label">Resolved example</p><h2>Title pattern preview</h2></div><span class="badge blue">Inherited</span></div><div class="card-body"><div class="google-preview"><div class="google-url">demo.aura-cms.com/movies/aurora-station</div><div class="google-title">Aurora Station | Aura Demo</div><p class="google-description">Discover featured movies, cast information, reviews, and curated collections powered by the Aura CMS demonstration site.</p></div><p class="tiny" style="margin:10px 0 0">Examples use a sample Movie. Search engines may display metadata differently.</p></div></section>
-            <section class="card"><div class="card-header"><div><p class="section-label">Safety</p><h3>Public output</h3></div></div><div class="card-body"><div class="toggle-row"><div class="toggle-copy"><strong>Enable SEO output</strong><span>Metadata, sitemap, and robots responses</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div><div class="notice warn" style="margin-top:12px"><span class="notice-icon">!</span><div><strong>Unsaved changes</strong><span>Diagnostics continue using the last saved values.</span></div></div></div></section>
+            <section class="card"><div class="card-header"><div><p class="section-label">Visibility</p><h3>SEO output</h3></div></div><div class="card-body"><div class="toggle-row"><div class="toggle-copy"><strong>Enable SEO output</strong><span>Show SEO metadata and make the sitemap available.</span></div><label class="toggle"><input type="checkbox" checked><span></span></label></div><div class="notice warn" style="margin-top:12px"><span class="notice-icon">!</span><div><strong>Unsaved changes</strong><span>Save your changes before running SEO checks.</span></div></div></div></section>
         </aside>
     </div>
 </main>

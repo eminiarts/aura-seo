@@ -5,19 +5,18 @@ const screens = [
     { key: 'resource-defaults', file: '04-resource-defaults.html', title: 'Resource defaults' },
     { key: 'record-metadata', file: '05-record-metadata.html', title: 'Record metadata' },
     { key: 'ai-suggestion', file: '06-ai-suggestion.html', title: 'AI suggestion' },
-    { key: 'diagnostics', file: '07-diagnostics.html', title: 'Diagnostics' },
-    { key: 'diagnostic-detail', file: '08-diagnostic-detail.html', title: 'Diagnostic detail' },
+    { key: 'diagnostics', file: '07-diagnostics.html', title: 'SEO checks' },
+    { key: 'diagnostic-detail', file: '08-diagnostic-detail.html', title: 'Issue guidance' },
     { key: 'sitemap-robots', file: '09-sitemap-robots.html', title: 'Sitemap & robots' },
-    { key: 'permissions', file: '10-permissions.html', title: 'Permissions' },
+    { key: 'permissions', file: '10-permissions.html', title: 'Role permissions' },
 ];
 
 const settingsTabs = [
     ['overview', 'Overview'],
     ['site-defaults', 'Site defaults'],
     ['content-types', 'Content types'],
-    ['diagnostics', 'Diagnostics'],
+    ['diagnostics', 'SEO checks'],
     ['sitemap-robots', 'Sitemap & robots'],
-    ['permissions', 'Permissions'],
 ];
 
 function tabMarkup(current) {
@@ -42,12 +41,15 @@ function shell(content, current) {
     const next = screens[(index + 1) % screens.length];
     const screen = screens[index];
     const recordMode = ['record-metadata', 'ai-suggestion'].includes(current);
+    const roleMode = current === 'permissions';
     const breadcrumbs = recordMode
         ? '<span>Movies</span><span class="crumb-separator">/</span><span>Aurora Station</span><span class="crumb-separator">/</span><strong>SEO</strong>'
-        : `<span>Settings</span><span class="crumb-separator">/</span><span>SEO</span><span class="crumb-separator">/</span><strong>${screen.title}</strong>`;
+        : roleMode
+            ? '<span>Settings</span><span class="crumb-separator">/</span><span>Roles</span><span class="crumb-separator">/</span><strong>SEO Manager</strong>'
+            : `<span>Settings</span><span class="crumb-separator">/</span><span>SEO</span><span class="crumb-separator">/</span><strong>${screen.title}</strong>`;
 
     return `
-        <div class="prototype-notice">Prototype - no data is saved</div>
+        <div class="prototype-notice">Rough outline - not production markup or copy</div>
         <div class="app-shell">
             <aside class="sidebar">
                 <a class="brand" href="index.html"><span class="aura-logo">AURA</span><span class="brand-mark"></span></a>
@@ -62,6 +64,7 @@ function shell(content, current) {
                     <div class="nav-group">
                         <div class="nav-label">Aura</div>
                         <a class="nav-link" href="#"><span class="nav-icon">U</span>Users</a>
+                        <a class="nav-link ${roleMode ? 'active' : ''}" href="10-permissions.html"><span class="nav-icon">R</span>Roles</a>
                         <a class="nav-link" href="#"><span class="nav-icon">F</span>Files</a>
                         <a class="nav-link" href="#"><span class="nav-icon">O</span>Options</a>
                     </div>
@@ -69,7 +72,7 @@ function shell(content, current) {
                         <div class="nav-label">Settings</div>
                         <a class="nav-link" href="#"><span class="nav-icon">S</span>General</a>
                         <a class="nav-link" href="#"><span class="nav-icon">AI</span>AI</a>
-                        <a class="nav-link ${recordMode ? '' : 'active'}" href="01-overview.html"><span class="nav-icon">SEO</span>SEO</a>
+                        <a class="nav-link ${recordMode || roleMode ? '' : 'active'}" href="01-overview.html"><span class="nav-icon">SEO</span>SEO</a>
                     </div>
                 </nav>
                 <div class="account"><div class="avatar">DA</div><div class="account-copy"><strong>Demo Admin</strong><span>Aura Demo</span></div><span>...</span></div>
@@ -80,7 +83,7 @@ function shell(content, current) {
                     <div class="top-actions"><a class="icon-button" href="index.html" title="Prototype index">::</a><button class="icon-button" type="button" title="Notifications">o</button></div>
                 </header>
                 <div class="page">
-                    <nav class="settings-tabs" aria-label="${recordMode ? 'Movie editor' : 'SEO settings'}">${recordMode ? resourceTabMarkup(current) : tabMarkup(current)}</nav>
+                    ${roleMode ? '' : `<nav class="settings-tabs" aria-label="${recordMode ? 'Movie editor' : 'SEO settings'}">${recordMode ? resourceTabMarkup(current) : tabMarkup(current)}</nav>`}
                     ${content}
                 </div>
             </div>
@@ -189,7 +192,7 @@ function installAiDemo() {
             setTimeout(() => {
                 generate.disabled = false;
                 generate.textContent = 'Generate another';
-                if (state) state.textContent = 'Suggestion ready - nothing has been saved';
+                if (state) state.textContent = 'Suggestion ready';
                 document.querySelector('[data-ai-result]')?.removeAttribute('hidden');
             }, 650);
         });
@@ -199,7 +202,7 @@ function installAiDemo() {
             apply.textContent = 'Applied to form';
             apply.classList.remove('primary');
             apply.classList.add('soft');
-            if (state) state.textContent = 'Applied locally - save the record to persist';
+            if (state) state.textContent = 'Applied to the form. Save the movie when ready.';
         });
     }
 }

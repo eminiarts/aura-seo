@@ -20,9 +20,9 @@
                     <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
                     <div class="checklist" style="margin-top:14px">
                         <div class="check-item"><span class="check-icon done">&#10003;</span><div class="check-copy"><strong>Confirm site identity</strong><span>Aura Demo / https://demo.aura-cms.com</span></div><a class="text-link" href="02-site-defaults.html">Review</a></div>
-                        <div class="check-item"><span class="check-icon done">&#10003;</span><div class="check-copy"><strong>Connect public Resources</strong><span>Movies, Actors, and Genres are registered in code</span></div><a class="text-link" href="03-content-types.html">Review</a></div>
+                        <div class="check-item"><span class="check-icon done">&#10003;</span><div class="check-copy"><strong>Choose content types</strong><span>Movies, Actors, and Genres are available</span></div><a class="text-link" href="03-content-types.html">Review</a></div>
                         <div class="check-item"><span class="check-icon done">&#10003;</span><div class="check-copy"><strong>Choose metadata defaults</strong><span>Title pattern and social defaults are ready</span></div><a class="text-link" href="02-site-defaults.html">Review</a></div>
-                        <div class="check-item"><span class="check-icon next">4</span><div class="check-copy"><strong>Resolve critical diagnostics</strong><span>One canonical issue must be fixed before launch</span></div><a class="text-link" href="07-diagnostics.html">Fix issue</a></div>
+                        <div class="check-item"><span class="check-icon next">4</span><div class="check-copy"><strong>Review SEO checks</strong><span>One URL needs attention before launch</span></div><a class="text-link" href="07-diagnostics.html">Review</a></div>
                         <div class="check-item"><span class="check-icon">5</span><div class="check-copy"><strong>Enable SEO output</strong><span>Publishes metadata, sitemap, and robots routes</span></div><button class="button small" disabled type="button">Enable</button></div>
                     </div>
                 </div>
@@ -39,13 +39,13 @@
     <section class="variant" data-variant="workspace">
         <header class="page-header">
             <div><p class="eyebrow">Variant B / Workspace / Recommended</p><h1>SEO overview</h1><p class="lede">A balanced operations view for established sites: health first, then the specific actions and content types that need attention.</p></div>
-            <div class="button-row"><a class="button" href="07-diagnostics.html">View diagnostics</a><button class="button primary" type="button">Run fresh scan</button></div>
+            <div class="button-row"><a class="button" href="07-diagnostics.html">View SEO checks</a><button class="button primary" type="button">Run checks</button></div>
         </header>
 
         <div class="metrics">
-            <div class="metric good"><div class="label"><span>SEO health</span><span class="badge good">Good</span></div><strong>92</strong><div class="change">Last scan 8 minutes ago</div></div>
-            <div class="metric bad"><div class="label"><span>Errors</span><span>Critical</span></div><strong>1</strong><div class="change">Canonical mismatch</div></div>
-            <div class="metric warn"><div class="label"><span>Warnings</span><span>Review</span></div><strong>4</strong><div class="change">3 records, 1 site default</div></div>
+            <div class="metric good"><div class="label"><span>SEO status</span><span class="badge good">Ready</span></div><strong>On</strong><div class="change">Last checked 8 minutes ago</div></div>
+            <div class="metric bad"><div class="label"><span>URL issues</span><span>Review</span></div><strong>1</strong><div class="change">Aurora Station</div></div>
+            <div class="metric warn"><div class="label"><span>Missing metadata</span><span>Review</span></div><strong>4</strong><div class="change">3 records, 1 site default</div></div>
             <div class="metric"><div class="label"><span>Indexed records</span><span>Coverage</span></div><strong>148</strong><div class="change">Across 3 content types</div></div>
         </div>
 
@@ -55,7 +55,7 @@
                     <div class="card-header"><div><p class="section-label">Needs attention</p><h2>Recommended actions</h2></div><a class="text-link" href="07-diagnostics.html">See all 5 issues</a></div>
                     <div class="card-body">
                         <div class="action-list">
-                            <div class="action-row"><span class="action-symbol bad">!</span><div class="action-copy"><strong>Fix the canonical URL for Aurora Station</strong><span>It points to a different host and will be rejected.</span></div><a class="button small" href="08-diagnostic-detail.html">Review</a></div>
+                            <div class="action-row"><span class="action-symbol bad">!</span><div class="action-copy"><strong>Review the URL for Aurora Station</strong><span>It currently links to a different website.</span></div><a class="button small" href="08-diagnostic-detail.html">Review</a></div>
                             <div class="action-row"><span class="action-symbol warn">3</span><div class="action-copy"><strong>Add descriptions to three Movies</strong><span>Use a manual value, inherited default, or an AI suggestion.</span></div><a class="button small" href="07-diagnostics.html">View records</a></div>
                             <div class="action-row"><span class="action-symbol">i</span><div class="action-copy"><strong>Add a default social image</strong><span>Six records currently fall back to text-only cards.</span></div><a class="button small" href="02-site-defaults.html">Configure</a></div>
                         </div>
@@ -86,12 +86,12 @@
         </header>
 
         <section class="card compact-summary">
-            <div class="score-ring"><strong>92</strong></div><div class="summary-copy"><h2>Healthy with one blocking issue</h2><p class="muted">Output is live. The next scheduled scan runs in 52 minutes.</p></div><div class="summary-stats"><div class="summary-stat"><strong style="color:var(--red)">1</strong><span>Error</span></div><div class="summary-stat"><strong style="color:var(--amber)">4</strong><span>Warnings</span></div><div class="summary-stat"><strong>148</strong><span>URLs</span></div></div>
+            <div class="score-ring"><strong>5</strong></div><div class="summary-copy"><h2>Five items need review</h2><p class="muted">SEO output is on. Checks last ran 8 minutes ago.</p></div><div class="summary-stats"><div class="summary-stat"><strong style="color:var(--red)">1</strong><span>URL</span></div><div class="summary-stat"><strong style="color:var(--amber)">3</strong><span>Descriptions</span></div><div class="summary-stat"><strong>1</strong><span>Image</span></div></div>
         </section>
 
         <div class="grid layout-main" style="margin-top:16px">
-            <section class="card flush"><div class="card-header"><div><p class="section-label">Issues by priority</p><h2>Open diagnostics</h2></div><a class="text-link" href="07-diagnostics.html">Open diagnostics</a></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Level</th><th>Issue</th><th>Source</th><th>Updated</th><th></th></tr></thead><tbody>
-                <tr><td><span class="badge bad">Error</span></td><td><strong>External canonical rejected</strong></td><td>Movies / Aurora Station</td><td>8m</td><td><a class="text-link" href="08-diagnostic-detail.html">Fix</a></td></tr>
+            <section class="card flush"><div class="card-header"><div><p class="section-label">Items to review</p><h2>SEO checks</h2></div><a class="text-link" href="07-diagnostics.html">View all</a></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Level</th><th>Issue</th><th>Source</th><th>Updated</th><th></th></tr></thead><tbody>
+                <tr><td><span class="badge bad">Error</span></td><td><strong>Canonical URL needs review</strong></td><td>Movies / Aurora Station</td><td>8m</td><td><a class="text-link" href="08-diagnostic-detail.html">Review</a></td></tr>
                 <tr><td><span class="badge warn">Warning</span></td><td><strong>Meta description is missing</strong></td><td>Movies / 3 records</td><td>8m</td><td><a class="text-link" href="07-diagnostics.html">View</a></td></tr>
                 <tr><td><span class="badge warn">Warning</span></td><td><strong>Default social image missing</strong></td><td>Site defaults</td><td>8m</td><td><a class="text-link" href="02-site-defaults.html">Fix</a></td></tr>
                 <tr><td><span class="badge blue">Notice</span></td><td><strong>Genres excluded from sitemap</strong></td><td>Content types</td><td>8m</td><td><a class="text-link" href="03-content-types.html">Review</a></td></tr>

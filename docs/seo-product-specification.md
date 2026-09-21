@@ -9,7 +9,15 @@
 
 Approve the product structure, permissions, and implementation sequence for the next Aura SEO iteration. The proposal keeps SEO inside the normal Aura administration experience, makes problems actionable, and avoids rebuilding a full third-party SEO suite.
 
-The accompanying prototype contains ten screens and three alternative overview layouts. The recommended overview is **Variant B - Workspace**, because it gives editors a compact health summary while keeping the next useful actions visible.
+The accompanying prototype contains ten rough screen outlines and three alternative overview layouts. These outlines are for reviewing product structure and flow only; they are not approved production markup or final copy.
+
+### Review decisions from 21 September 2026
+
+- Production must use Aura's existing settings layout, fields, tabs, buttons, notices, role editor, responsive behavior, and styling wherever possible.
+- Prototype HTML and CSS must not be copied into production. Custom markup or styling is appropriate only when Aura has no suitable component.
+- End-user copy should explain the task and result, not internal storage, registration, authorization, or connector behavior.
+- V1 diagnostics will be a simple list of items to review, with direct links to the relevant setting or record.
+- Aura SEO registers its permissions. Permission assignment remains in Aura's existing role edit page; the plugin will not add a separate permissions settings tab or capability matrix.
 
 ## 2. Product outcome
 
@@ -27,16 +35,16 @@ The plugin should remain fail-closed. Installation alone must not expose Resourc
 ### Included
 
 - One Team-scoped SEO settings area under **Settings > SEO**.
-- A clear overview with setup state, health summary, and prioritized actions.
+- A clear overview with setup state and prioritized actions.
 - Site identity, canonical URL, title pattern, locale, social-image defaults, and robots defaults.
 - A per-Resource overview showing registration, indexing, sitemap, title source, description source, and default pattern.
 - Per-Resource Team overrides for enablement and presentation defaults, while public enumeration remains registered in code.
 - A focused SEO editor inside each participating record.
 - Search and social previews using resolved metadata.
 - AI-generated title and description suggestions through Aura's core AI connector.
-- Diagnostics with filters, direct record links, suggested actions, and guarded bulk actions.
+- Simple SEO checks with direct links to the relevant setting or record.
 - Sitemap and robots status, route visibility, last generation information, and safe controls.
-- Permission guidance for SEO management and diagnostic access.
+- SEO permissions registered by the plugin and shown in Aura's existing role editor.
 
 ### Not included
 
@@ -54,12 +62,11 @@ The SEO settings entry remains in the standard Aura settings sidebar. Inside the
 
 | Area | Purpose |
 | --- | --- |
-| Overview | Health, setup progress, recent scan, and next actions |
+| Overview | Setup progress, last check, and next actions |
 | Site defaults | Site identity, title pattern, default description, locale, social images, and default robots behavior |
 | Content types | Registered Resources and their Team-level SEO behavior |
-| Diagnostics | Actionable site and record issues |
+| SEO checks | A short, actionable list of site and record issues |
 | Sitemap & robots | Public route status, source coverage, and robots rules |
-| Permissions | Explain and assign the packaged permission capabilities when the host supports role management |
 
 The Resource editor receives a single **SEO** tab. The tab is not a second settings system; it only stores record-level overrides.
 
@@ -72,7 +79,9 @@ The Resource editor receives a single **SEO** tab. The tab is not a second setti
 | User with `diagnose-aura-seo` | View diagnostics and open affected records; cannot change global configuration |
 | Resource editor without SEO permissions | Edit ordinary Resource fields; SEO tab is hidden or read-only according to the host policy |
 
-Authorization must run server-side. Hiding navigation is not sufficient. AI generation requires the same ability used to edit the target SEO fields and keeps the existing rate limit.
+Aura SEO registers the packaged permissions during installation. Administrators assign them with all other permissions on Aura's existing role edit page. There is no standalone SEO permissions page or capability matrix.
+
+Authorization must still be enforced by the implementation, but those internal rules should not be presented as explanatory UI copy. AI generation uses the same edit access as the target SEO fields and keeps the existing rate limit.
 
 ## 6. Configuration model
 
@@ -177,7 +186,7 @@ The title and description show character guidance, not a hard quality score. Pre
 
 ## 10. AI-assisted metadata
 
-Aura SEO calls the stable core AI connector contract. It must not know whether the core implementation uses custom adapters, Laravel AI SDK, GLM, or another provider.
+Aura SEO calls the stable core AI connector contract. Provider-specific behavior remains in Aura core rather than the SEO user interface.
 
 ### Input
 
@@ -192,7 +201,6 @@ Aura SEO calls the stable core AI connector contract. It must not know whether t
 
 - One suggested meta title, maximum 60 characters
 - One suggested meta description, maximum 160 characters
-- Optional short explanation for the editor
 
 ### Interaction rules
 
@@ -205,17 +213,13 @@ Aura SEO calls the stable core AI connector contract. It must not know whether t
 
 ## 11. Diagnostics
 
-Diagnostics become a first-class settings tab instead of a detached report.
+SEO checks become a first-class settings tab instead of a detached report. V1 deliberately stays small and task-focused.
 
 Each issue includes:
 
-- Severity: error, warning, or notice
-- Scope: site, Resource, or record
-- Resource/source key
-- Record identifier and display title, when available
-- Human-readable problem
-- Recommended action
-- Direct action: open settings, open Resource defaults, or edit record
+- A short, human-readable problem
+- The affected setting, content type, or record
+- One direct action: open settings, open content defaults, or edit the record
 
 Initial checks:
 
@@ -223,13 +227,12 @@ Initial checks:
 - Missing or invalid canonical base URL
 - Default indexing disabled
 - Missing site description or social image
-- Registered Resource missing required public-boundary callbacks
 - Sitemap-capable Resource disabled or empty
 - Record missing title or description
 - Duplicate or invalid canonical URL
 - Record excluded from index while present in sitemap
 
-Safe bulk actions are limited to deterministic changes, such as applying inherited defaults to blank fields. AI generation remains per-record unless a later specification defines review and cost controls.
+V1 does not require health scoring, exports, severity filters, bulk fixes, or a separate technical detail screen. Selecting an item should normally open the existing setting or record editor. A small guidance view may be used only when the user needs a brief explanation before editing.
 
 ## 12. Sitemap and robots
 
@@ -247,11 +250,11 @@ Settings may disable the plugin routes. If a physical `public/robots.txt` shadow
 ## 13. Empty, loading, and failure states
 
 - New install: guided checklist with SEO output still disabled.
-- No registered Resources: explain code registration and link to developer documentation.
-- No diagnostic issues: show last scan time and a clear healthy state.
+- No available content types: show a concise empty state and link to developer documentation.
+- No SEO check issues: show the last check time and a clear healthy state.
 - AI unavailable: keep manual editing fully usable and link authorized administrators to AI settings.
-- Sitemap unavailable: explain which registration requirement is missing.
-- Unsaved settings: diagnostics clearly state that scans use last-saved values.
+- Sitemap unavailable: explain what the administrator can do next.
+- Unsaved settings: ask the administrator to save before running checks.
 
 ## 14. Technical changes from the current implementation
 
@@ -269,7 +272,7 @@ Settings may disable the plugin routes. If a physical `public/robots.txt` shadow
 - Add a Team-level Resource override map.
 - Add site route toggles to saved settings rather than config-only behavior.
 - Extend resolution to include Resource defaults.
-- Replace the basic diagnostic table with actionable issue rows and direct links.
+- Replace the detached diagnostic report with a simple actionable list and direct links.
 - Reshape the record tab into Search, Social, and Advanced sections with a stable preview column.
 - Replace direct AI pre-fill with suggestion review and selective apply.
 
@@ -305,17 +308,14 @@ Settings may disable the plugin routes. If a physical `public/robots.txt` shadow
 5. Implement Content types and Resource defaults.
 6. Refactor the record SEO tab and preview.
 7. Change AI pre-fill into review-and-apply suggestions.
-8. Implement actionable diagnostics.
+8. Implement the minimal V1 SEO checks list with direct links.
 9. Implement Sitemap & robots administration.
-10. Finish permissions, accessibility, responsive behavior, documentation, and release verification.
+10. Register SEO permissions in Aura's existing role editor, then finish accessibility, responsive behavior, documentation, and release verification.
 
 ## 17. Review questions for Enes
 
 1. Which overview variant should be implemented: Guided setup, Workspace, or Compact operations?
 2. Should Team administrators be able to disable a code-registered Resource, or should that remain code-only?
 3. Should sitemap and robots route toggles be editable per Team or deployment-wide only?
-4. Is diagnostic-only access useful, or should all diagnostics require `manage-aura-seo`?
-5. Should AI offer one suggestion or two alternatives?
-6. Should social fields share one default set, with platform overrides hidden under Advanced as proposed?
-7. Are deterministic bulk fixes acceptable, or should all fixes remain one-record-at-a-time for the first release?
-
+4. Should AI offer one suggestion or two alternatives?
+5. Should social fields share one default set, with platform overrides hidden under Advanced as proposed?
