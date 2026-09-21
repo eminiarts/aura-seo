@@ -22,7 +22,7 @@
     "require": {
         "php": "^8.4",
         "ext-xmlwriter": "*",
-        "eminiarts/aura-cms": "^2.0",
+        "eminiarts/aura-cms": "^1.0",
         "illuminate/auth": "^12.0|^13.0",
         "illuminate/cache": "^12.0|^13.0",
         "illuminate/console": "^12.0|^13.0",
@@ -73,7 +73,7 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "eminiarts/aura-cms": "2.0.0"
+                    "eminiarts/aura-cms": "1.0.0"
                 }
             }
         }
@@ -94,4 +94,3 @@
     "minimum-stability": "stable",
     "prefer-stable": true
 }
-
