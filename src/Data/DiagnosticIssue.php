@@ -10,6 +10,8 @@ final readonly class DiagnosticIssue
         public ?string $source = null,
         public ?string $record = null,
         public ?string $canonical = null,
+        public ?string $actionLabel = null,
+        public ?string $actionUrl = null,
     ) {}
 
     public function isError(): bool

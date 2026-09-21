@@ -101,6 +101,41 @@ test('robots.txt is sanitized and remains fail-closed for unknown hosts', functi
         ->assertDontSee('Sitemap:');
 });
 
+test('Team settings can disable the sitemap and robots routes', function () {
+    createSeoSettings([
+        'seo-canonical-base-url' => 'https://disabled.test',
+        'seo-enabled' => true,
+        'seo-robots-route-enabled' => false,
+        'seo-sitemap-enabled' => false,
+    ]);
+    registerSitemapDefinition();
+
+    $this->get('https://disabled.test/sitemap.xml')->assertNotFound();
+    $this->get('https://disabled.test/robots.txt')->assertNotFound();
+});
+
+test('a content type can be removed from the sitemap without disabling its SEO output', function () {
+    registerSitemapDefinition();
+    createSeoSettings([
+        'seo-canonical-base-url' => 'https://example.test',
+        'seo-enabled' => true,
+        'seo-resource-articles-enabled' => true,
+        'seo-resource-articles-sitemap' => false,
+        'seo-robots-follow' => true,
+        'seo-robots-index' => true,
+        'seo-sitemap-enabled' => true,
+    ]);
+    Article::query()->create([
+        'summary' => 'Still has SEO metadata.',
+        'title' => 'Not in sitemap',
+    ]);
+
+    $this->get('https://example.test/sitemap.xml')
+        ->assertOk()
+        ->assertDontSee('/sitemap/articles-1.xml', false);
+    $this->get('https://example.test/sitemap/articles-1.xml')->assertNotFound();
+});
+
 test('cache keys are reused and invalidated after registered resource changes', function () {
     $profile = sitemapProfile();
     registerSitemapDefinition();

@@ -5,30 +5,37 @@ namespace Aura\Seo\Settings;
 use Aura\Base\Fields\Boolean;
 use Aura\Base\Fields\Image;
 use Aura\Base\Fields\Panel;
+use Aura\Base\Fields\Select;
+use Aura\Base\Fields\Tab;
 use Aura\Base\Fields\Text;
 use Aura\Base\Fields\Textarea;
 use Aura\Base\Fields\View;
 use Aura\Base\Settings\SettingsPage;
+use Aura\Seo\Services\SeoRegistry;
+use Aura\Seo\Services\SeoResourceSettings;
+use Illuminate\Support\Str;
 
 final class SeoSettingsPage
 {
-    public static function make(): SettingsPage
+    public static function make(?SeoRegistry $registry = null): SettingsPage
     {
+        $registry ??= app(SeoRegistry::class);
+
         return new SettingsPage(
             slug: 'seo',
             title: 'SEO',
-            fields: self::fields(),
+            fields: self::fields($registry),
             icon: 'search',
-            description: 'Configure site-wide metadata defaults, social images, robots behavior, and diagnostics.',
+            description: 'Manage search metadata, social sharing, SEO checks, the sitemap, and robots.txt.',
             order: 25,
-            defaults: self::defaults(),
+            defaults: self::defaults($registry),
         );
     }
 
     /** @return array<string, mixed> */
-    private static function defaults(): array
+    private static function defaults(SeoRegistry $registry): array
     {
-        return [
+        $defaults = [
             'seo-enabled' => config('aura-seo.settings.enabled', false),
             'seo-site-name' => config('aura-seo.settings.site_name', config('app.name', 'Aura')),
             'seo-canonical-base-url' => config('aura-seo.settings.canonical_base_url', config('app.url')),
@@ -41,21 +48,39 @@ final class SeoSettingsPage
             'seo-robots-index' => config('aura-seo.settings.robots_index', false),
             'seo-robots-follow' => config('aura-seo.settings.robots_follow', false),
             'seo-robots-rules' => config('aura-seo.settings.robots_rules'),
+            'seo-sitemap-enabled' => config('aura-seo.routes.sitemap', true) && config('aura-seo.settings.sitemap_enabled', true),
+            'seo-robots-route-enabled' => config('aura-seo.routes.robots', true) && config('aura-seo.settings.robots_route_enabled', true),
         ];
+
+        foreach ($registry->all() as $definition) {
+            $defaults[SeoResourceSettings::slug($definition, 'enabled')] = true;
+            $defaults[SeoResourceSettings::slug($definition, 'title-pattern')] = '';
+            $defaults[SeoResourceSettings::slug($definition, 'default-description')] = '';
+            $defaults[SeoResourceSettings::slug($definition, 'default-social-image')] = null;
+            $defaults[SeoResourceSettings::slug($definition, 'index')] = 'inherit';
+            $defaults[SeoResourceSettings::slug($definition, 'follow')] = 'inherit';
+
+            if ($definition->includesSitemap()) {
+                $defaults[SeoResourceSettings::slug($definition, 'sitemap')] = true;
+            }
+        }
+
+        return $defaults;
     }
 
     /** @return list<array<string, mixed>> */
-    private static function fields(): array
+    private static function fields(SeoRegistry $registry): array
     {
-        return [
-            self::field('Site', 'seo-site-panel', Panel::class, ['style' => ['width' => '50']]),
+        $fields = [
+            self::field('Site defaults', 'seo-site-defaults-tab', Tab::class),
+            self::field('Site information', 'seo-site-panel', Panel::class),
             self::field('Enable SEO output', 'seo-enabled', Boolean::class),
             self::field('Site name', 'seo-site-name', Text::class, [
                 'validation' => 'required|string|max:255',
                 'style' => ['width' => '50'],
             ]),
-            self::field('Canonical base URL', 'seo-canonical-base-url', Text::class, [
-                'instructions' => 'Absolute HTTP(S) origin used for canonical and sitemap URLs.',
+            self::field('Site URL', 'seo-canonical-base-url', Text::class, [
+                'instructions' => 'Enter the full site address, including https://.',
                 'validation' => 'required|url:http,https|max:2048',
                 'style' => ['width' => '50'],
             ]),
@@ -67,7 +92,7 @@ final class SeoSettingsPage
                 'validation' => 'required|string|max:16',
                 'style' => ['width' => '25'],
             ]),
-            self::field('Defaults', 'seo-defaults-panel', Panel::class, ['style' => ['width' => '50']]),
+            self::field('Search defaults', 'seo-defaults-panel', Panel::class),
             self::field('SEO title pattern', 'seo-title-pattern', Text::class, [
                 'instructions' => 'Available tokens: [Post Title], [Separator], and [Site Name].',
                 'validation' => 'required|string|max:255',
@@ -75,6 +100,7 @@ final class SeoSettingsPage
             self::field('Default description', 'seo-default-description', Textarea::class, [
                 'validation' => 'nullable|string|max:160',
             ]),
+            self::field('Social sharing defaults', 'seo-social-panel', Panel::class),
             self::field('Default Open Graph image', 'seo-default-open-graph-image', Image::class, [
                 'max_files' => 1,
                 'style' => ['width' => '50'],
@@ -83,7 +109,75 @@ final class SeoSettingsPage
                 'max_files' => 1,
                 'style' => ['width' => '50'],
             ]),
-            self::field('Robots', 'seo-robots-panel', Panel::class, ['style' => ['width' => '100']]),
+            self::field('Content types', 'seo-content-types-tab', Tab::class),
+        ];
+
+        if ($registry->all() === []) {
+            $fields[] = self::field('Content types', 'seo-content-types-empty-panel', Panel::class);
+            $fields[] = self::field('No content types', 'seo-content-types-empty', View::class, [
+                'view' => 'aura-seo::settings.content-types-empty',
+            ]);
+        }
+
+        foreach ($registry->all() as $definition) {
+            $label = Str::headline($definition->key);
+            $fields[] = self::field($label, SeoResourceSettings::slug($definition, 'panel'), Panel::class);
+            $fields[] = self::field("Enable SEO for {$label}", SeoResourceSettings::slug($definition, 'enabled'), Boolean::class, [
+                'style' => ['width' => '50'],
+            ]);
+
+            if ($definition->includesSitemap()) {
+                $fields[] = self::field("Include {$label} in the sitemap", SeoResourceSettings::slug($definition, 'sitemap'), Boolean::class, [
+                    'style' => ['width' => '50'],
+                ]);
+            }
+
+            $fields[] = self::field('Title pattern', SeoResourceSettings::slug($definition, 'title-pattern'), Text::class, [
+                'instructions' => 'Leave blank to use the site title pattern.',
+                'validation' => 'nullable|string|max:255',
+            ]);
+            $fields[] = self::field('Default description', SeoResourceSettings::slug($definition, 'default-description'), Textarea::class, [
+                'instructions' => 'Used when a record has no description.',
+                'validation' => 'nullable|string|max:160',
+            ]);
+            $fields[] = self::field('Default social image', SeoResourceSettings::slug($definition, 'default-social-image'), Image::class, [
+                'max_files' => 1,
+            ]);
+            $fields[] = self::field('Search indexing', SeoResourceSettings::slug($definition, 'index'), Select::class, [
+                'options' => [
+                    'inherit' => 'Use site default',
+                    'index' => 'Allow indexing',
+                    'noindex' => 'Do not index',
+                ],
+                'style' => ['width' => '50'],
+            ]);
+            $fields[] = self::field('Follow links', SeoResourceSettings::slug($definition, 'follow'), Select::class, [
+                'options' => [
+                    'inherit' => 'Use site default',
+                    'follow' => 'Allow following links',
+                    'nofollow' => 'Do not follow links',
+                ],
+                'style' => ['width' => '50'],
+            ]);
+        }
+
+        return array_merge($fields, [
+            self::field('SEO checks', 'seo-checks-tab', Tab::class),
+            self::field('Items to review', 'seo-diagnostics-panel', Panel::class),
+            self::field('SEO checks', 'seo-diagnostics', View::class, [
+                'view' => 'aura-seo::settings.diagnostics',
+            ]),
+            self::field('Sitemap & robots', 'seo-sitemap-robots-tab', Tab::class),
+            self::field('Public files', 'seo-public-files-panel', Panel::class),
+            self::field('Enable sitemap.xml', 'seo-sitemap-enabled', Boolean::class, [
+                'instructions' => 'Make the sitemap available for this site.',
+                'style' => ['width' => '50'],
+            ]),
+            self::field('Enable robots.txt', 'seo-robots-route-enabled', Boolean::class, [
+                'instructions' => 'Use Aura SEO to provide robots.txt for this site.',
+                'style' => ['width' => '50'],
+            ]),
+            self::field('Search visibility', 'seo-robots-panel', Panel::class),
             self::field('Allow indexing by default', 'seo-robots-index', Boolean::class, [
                 'style' => ['width' => '50'],
             ]),
@@ -94,11 +188,7 @@ final class SeoSettingsPage
                 'instructions' => 'One Allow, Disallow, Crawl-delay, or comment line per row.',
                 'validation' => 'nullable|string|max:10000',
             ]),
-            self::field('Diagnostics', 'seo-diagnostics-panel', Panel::class, ['style' => ['width' => '100']]),
-            self::field('SEO diagnostics', 'seo-diagnostics', View::class, [
-                'view' => 'aura-seo::settings.diagnostics',
-            ]),
-        ];
+        ]);
     }
 
     /** @param array<string, mixed> $options */

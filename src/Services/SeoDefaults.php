@@ -16,12 +16,17 @@ final readonly class SeoDefaults
             return $value;
         }
 
+        $definition = $this->registry->findFor($resource);
+        $resourcePattern = $definition
+            ? $this->string(Aura::setting(SeoResourceSettings::slug($definition, 'title-pattern')))
+            : null;
+
         $title = $this->titles->render(
-            pattern: (string) Aura::setting(
+            pattern: $resourcePattern ?? (string) Aura::setting(
                 'seo-title-pattern',
                 config('aura-seo.settings.title_pattern', '[Post Title] [Separator] [Site Name]'),
             ),
-            postTitle: $this->string(data_get($resource, $this->registry->findFor($resource)?->titleField() ?? 'title'))
+            postTitle: $this->string(data_get($resource, $definition?->titleField() ?? 'title'))
                 ?? $this->string($resource->getAttribute('title')),
             separator: (string) Aura::setting('seo-separator', config('aura-seo.settings.separator', '|')),
             siteName: $this->string(Aura::setting('seo-site-name', config('aura-seo.settings.site_name', config('app.name')))),

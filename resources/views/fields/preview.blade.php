@@ -2,12 +2,12 @@
 @php($profile = app(\Aura\Seo\Services\PreviewSiteProfileResolver::class)->resolveFor($this->model))
 <x-aura::fields.wrapper :field="$field">
     @if(!$definition)
-        <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            Register this Resource in <code>aura-seo.resources</code> to preview resolved metadata.
+        <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+            {{ __('SEO preview is not available for this content type yet.') }}
         </div>
     @elseif(!$profile)
-        <div class="rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-700">
-            Enable and save the SEO settings for this site or team to preview the resolved title, description, canonical URL, and social card.
+        <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-white/10 dark:bg-white/[0.03] dark:text-gray-200">
+            {{ __('Enable SEO and save the site settings to see the preview.') }}
         </div>
     @else
         @php($metadata = app(\Aura\Seo\Services\MetadataResolver::class)->resolve($this->model, $profile, $definition))

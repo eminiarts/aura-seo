@@ -4,11 +4,12 @@ namespace Aura\Seo\Services;
 
 use Aura\Base\Settings\SettingsStore;
 use Aura\Seo\Contracts\SiteProfileResolver;
+use Aura\Seo\Data\SeoResourceDefaults;
 use Aura\Seo\Data\SiteProfileData;
 
 final class ConfiguredSiteProfileResolver implements SiteProfileResolver
 {
-    public function __construct(private readonly SettingsStore $settings) {}
+    public function __construct(private readonly SeoRegistry $registry, private readonly SettingsStore $settings) {}
 
     /** @return list<string> */
     public function hosts(): array
@@ -84,7 +85,50 @@ final class ConfiguredSiteProfileResolver implements SiteProfileResolver
             separator: (string) ($values['seo-separator'] ?? config('aura-seo.settings.separator', '|')),
             teamId: $teamId,
             titleTemplate: (string) ($values['seo-title-pattern'] ?? config('aura-seo.settings.title_pattern', '[Post Title] [Separator] [Site Name]')),
+            sitemapEnabled: filter_var($values['seo-sitemap-enabled'] ?? config('aura-seo.settings.sitemap_enabled', true), FILTER_VALIDATE_BOOL),
+            robotsEnabled: filter_var($values['seo-robots-route-enabled'] ?? config('aura-seo.settings.robots_route_enabled', true), FILTER_VALIDATE_BOOL),
+            resourceDefaults: $this->resourceDefaults($values),
         );
+    }
+
+    /** @param array<string, mixed> $values
+     * @return array<string, SeoResourceDefaults>
+     */
+    private function resourceDefaults(array $values): array
+    {
+        $defaults = [];
+
+        foreach ($this->registry->all() as $definition) {
+            $defaults[$definition->key] = new SeoResourceDefaults(
+                enabled: filter_var($values[SeoResourceSettings::slug($definition, 'enabled')] ?? true, FILTER_VALIDATE_BOOL),
+                sitemap: filter_var(
+                    $values[SeoResourceSettings::slug($definition, 'sitemap')] ?? $definition->includesSitemap(),
+                    FILTER_VALIDATE_BOOL,
+                ),
+                titlePattern: $this->nonEmptyString($values[SeoResourceSettings::slug($definition, 'title-pattern')] ?? null),
+                defaultDescription: $this->nonEmptyString($values[SeoResourceSettings::slug($definition, 'default-description')] ?? null),
+                defaultSocialImage: $this->resolveImage($values[SeoResourceSettings::slug($definition, 'default-social-image')] ?? null),
+                index: $this->nullableBool($values[SeoResourceSettings::slug($definition, 'index')] ?? null, 'index', 'noindex'),
+                follow: $this->nullableBool($values[SeoResourceSettings::slug($definition, 'follow')] ?? null, 'follow', 'nofollow'),
+            );
+        }
+
+        return $defaults;
+    }
+
+    private function nullableBool(mixed $value, string $truthy, string $falsy): ?bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        $value = strtolower(trim((string) $value));
+
+        return match ($value) {
+            $truthy => true,
+            $falsy => false,
+            default => null,
+        };
     }
 
     private function resolveImage(mixed $value): ?string

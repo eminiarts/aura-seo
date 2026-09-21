@@ -10,6 +10,7 @@ it('installs as a free Aura package with explicit public surfaces and optional r
     $commands = array_keys(Artisan::all());
 
     expect($composer['license'])->toBe('MIT')
+        ->and($composer['require']['eminiarts/aura-cms'])->toBe('^1.0')
         ->and($composer['require'])->not->toHaveKey('eminiarts/aura-redirects')
         ->and($composer['suggest'])->toHaveKey('eminiarts/aura-redirects')
         ->and(Route::has('aura.seo.sitemap.index'))->toBeTrue()

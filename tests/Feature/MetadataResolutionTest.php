@@ -1,5 +1,6 @@
 <?php
 
+use Aura\Seo\Data\SeoResourceDefaults;
 use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Data\SiteProfileData;
 use Aura\Seo\Services\MetadataRenderer;
@@ -126,4 +127,49 @@ test('the same deterministic resolver supports Aura custom-table Resources', fun
     expect($metadata->title)->toBe('Custom override')
         ->and($metadata->description)->toBe('Custom summary')
         ->and($metadata->canonical)->toBe('https://example.test/pages/'.$page->getKey());
+});
+
+test('content type defaults extend metadata resolution without overriding record mappings', function () {
+    $article = Article::query()->create([
+        'summary' => '',
+        'title' => 'Resource defaults',
+    ])->fresh();
+    $definition = SeoResourceDefinition::make('articles', Article::class)
+        ->title('title')
+        ->description('summary')
+        ->url(fn (Article $record): string => '/articles/'.$record->getKey())
+        ->publicIndex(fn () => Article::query(), fn (): bool => true);
+    $profile = seoTestProfile([
+        'resourceDefaults' => [
+            'articles' => new SeoResourceDefaults(
+                defaultDescription: 'Article description',
+                defaultSocialImage: 'https://example.test/article.jpg',
+                index: false,
+                follow: false,
+                titlePattern: '[Post Title] - Articles',
+            ),
+        ],
+    ]);
+
+    $metadata = app(MetadataResolver::class)->resolve($article, $profile, $definition);
+
+    expect($metadata->title)->toBe('Resource defaults - Articles')
+        ->and($metadata->description)->toBe('Article description')
+        ->and($metadata->openGraph['og:image'])->toBe('https://example.test/article.jpg')
+        ->and($metadata->robots)->toBe(['noindex', 'nofollow']);
+});
+
+test('disabling a content type removes its public canonical and indexing', function () {
+    $article = Article::query()->create(['title' => 'Disabled type'])->fresh();
+    $definition = seoArticleDefinition();
+    $profile = seoTestProfile([
+        'resourceDefaults' => [
+            'articles' => new SeoResourceDefaults(enabled: false),
+        ],
+    ]);
+
+    $metadata = app(MetadataResolver::class)->resolve($article, $profile, $definition);
+
+    expect($metadata->canonical)->toBeNull()
+        ->and($metadata->robots)->toBe(['noindex', 'nofollow']);
 });

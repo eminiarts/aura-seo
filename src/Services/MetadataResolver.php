@@ -20,7 +20,11 @@ final readonly class MetadataResolver
     public function resolve(Model $resource, SiteProfileData $profile, ?SeoResourceDefinition $definition = null): ResolvedMetadata
     {
         $definition ??= $this->registry->findFor($resource);
-        $public = $profile->enabled && $definition?->hasUrlResolver() && $definition->isPublic($resource, $profile);
+        $resourceDefaults = $definition ? $profile->defaultsFor($definition) : null;
+        $public = $profile->enabled
+            && $resourceDefaults?->enabled === true
+            && $definition?->hasUrlResolver()
+            && $definition->isPublic($resource, $profile);
 
         $explicitTitle = $this->firstString($this->field($resource, $definition, 'meta_title'));
         $title = $explicitTitle ?? $this->firstString(
@@ -30,23 +34,39 @@ final readonly class MetadataResolver
         );
 
         if ($explicitTitle === null) {
-            $title = $this->applyTitleTemplate($title, $profile);
+            $title = $this->applyTitleTemplate(
+                $title,
+                $resourceDefaults?->titlePattern ?? $profile->titleTemplate,
+                $profile,
+            );
         }
 
         $description = $this->firstString(
             $this->field($resource, $definition, 'meta_description'),
             $definition?->mappedDescription($resource, $profile),
+            $resourceDefaults?->defaultDescription,
             $profile->defaultDescription,
             config('aura-seo.fallbacks.description'),
         );
 
         $canonical = $public ? $this->canonical($resource, $profile, $definition) : null;
-        $index = $public && $this->firstBool($this->field($resource, $definition, 'index'), $profile->index, config('aura-seo.fallbacks.index', false));
-        $follow = $public && $this->firstBool($this->field($resource, $definition, 'follow'), $profile->follow, config('aura-seo.fallbacks.follow', false));
+        $index = $public && $this->firstBool(
+            $this->field($resource, $definition, 'index'),
+            $resourceDefaults?->index,
+            $profile->index,
+            config('aura-seo.fallbacks.index', false),
+        );
+        $follow = $public && $this->firstBool(
+            $this->field($resource, $definition, 'follow'),
+            $resourceDefaults?->follow,
+            $profile->follow,
+            config('aura-seo.fallbacks.follow', false),
+        );
 
         $image = $this->firstImage(
             $this->field($resource, $definition, 'og_image'),
             $definition?->mappedImage($resource, $profile),
+            $resourceDefaults?->defaultSocialImage,
             $profile->defaultOpenGraphImage,
             $profile->defaultSocialImage,
             config('aura-seo.fallbacks.image'),
@@ -103,13 +123,13 @@ final readonly class MetadataResolver
         return $alternates;
     }
 
-    private function applyTitleTemplate(?string $title, SiteProfileData $profile): ?string
+    private function applyTitleTemplate(?string $title, string $pattern, SiteProfileData $profile): ?string
     {
         if ($title === null) {
             return null;
         }
 
-        $template = trim($profile->titleTemplate);
+        $template = trim($pattern);
 
         if ($template === '') {
             return $title;

@@ -1,6 +1,6 @@
 # Aura SEO Product and Technical Specification
 
-**Status:** Proposal for review  
+**Status:** V1 implemented; pending product review
 **Prepared for:** Enes and the Aura CMS team  
 **Date:** 21 September 2026  
 **Prototype:** `docs/prototypes/seo-product/index.html`
@@ -130,7 +130,7 @@ For registered Resources only, settings may provide presentation and exposure ov
 - Default social image
 - Default index/follow values
 
-These values should be stored as one map keyed by the stable Resource source key. Removing a registration leaves inert settings that can be pruned safely.
+These values are stored under stable setting keys derived from the Resource source key. Removing a registration leaves inert settings that can be pruned safely.
 
 ### 6.4 Record overrides
 
@@ -150,9 +150,9 @@ Blank values inherit rather than erase defaults.
 Resolved metadata must remain deterministic:
 
 1. Record override
-2. Team-level Resource default
-3. Team-level site default
-4. Registered Resource mapping
+2. Registered Resource mapping
+3. Team-level Resource default
+4. Team-level site default
 5. Application/config fallback
 6. Fail-closed fallback
 
