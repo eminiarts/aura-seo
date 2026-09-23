@@ -11,8 +11,15 @@ final readonly class AiMetadataGenerator
 {
     public function __construct(private AiConnector $ai) {}
 
-    public function generate(?string $title, ?string $content): AiMetadataSuggestion
-    {
+    public function generate(
+        ?string $title,
+        ?string $content,
+        ?string $resourceType = null,
+        ?string $siteName = null,
+        ?string $locale = null,
+        ?string $currentTitle = null,
+        ?string $currentDescription = null,
+    ): AiMetadataSuggestion {
         $title = trim((string) $title);
         $content = Str::limit(trim(strip_tags((string) $content)), 12000, '');
 
@@ -20,10 +27,20 @@ final readonly class AiMetadataGenerator
             throw new RuntimeException('Add a title or content before generating SEO metadata.');
         }
 
+        $context = array_filter([
+            $resourceType ? 'Content type: '.Str::headline($resourceType) : null,
+            $siteName ? 'Site name: '.$siteName : null,
+            $locale ? 'Locale: '.$locale : null,
+            $currentTitle ? 'Current meta title: '.$currentTitle : null,
+            $currentDescription ? 'Current meta description: '.$currentDescription : null,
+            "Title: {$title}",
+            "Content:\n{$content}",
+        ]);
+
         $response = $this->ai->generate(
-            prompt: "Title: {$title}\n\nContent:\n{$content}",
+            prompt: implode("\n\n", $context),
             systemPrompt: <<<'PROMPT'
-Generate search metadata for the supplied content. Return only a JSON object with exactly two string keys: "meta_title" and "meta_description". Keep meta_title at 60 characters or fewer and meta_description at 160 characters or fewer. Be accurate, specific, and avoid quotation marks around the JSON response.
+Generate search metadata for the supplied content and locale. Improve existing metadata when it is provided. Return only a JSON object with exactly two string keys: "meta_title" and "meta_description". Keep meta_title at 60 characters or fewer and meta_description at 160 characters or fewer. Be accurate and specific.
 PROMPT,
         );
 

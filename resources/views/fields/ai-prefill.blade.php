@@ -3,6 +3,8 @@
 @php($definition = app(\Aura\Seo\Services\SeoRegistry::class)->findFor($this->model))
 @php($titleField = $definition?->titleField() ?? 'title')
 @php($descriptionField = $definition?->descriptionField())
+@php($canManageSeo = \Illuminate\Support\Facades\Gate::allows('aura-seo.manage'))
+@php($canConfigureAi = auth()->user() && method_exists(auth()->user(), 'isSuperAdmin') && auth()->user()->isSuperAdmin())
 
 <div
     class="w-full px-4 pb-4"
@@ -38,8 +40,12 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || '',
                     },
                     body: JSON.stringify({
+                        resource: @js($definition?->key),
+                        record_id: @js((string) ($this->model?->getKey() ?? '')),
                         title: fields[@js($titleField)] || '',
                         content: @if ($descriptionField) fields[@js($descriptionField)] || '' @else fields.content || fields.body || fields.excerpt || '' @endif,
+                        current_meta_title: fields[@js($slug('meta_title'))] || '',
+                        current_meta_description: fields[@js($slug('meta_description'))] || '',
                     }),
                 });
                 const payload = await response.json();
@@ -74,17 +80,27 @@
         },
     }"
 >
-    <div class="flex flex-wrap items-center gap-3">
-        <x-aura::button type="button" x-on:click="generate" x-bind:disabled="loading">
-            <span x-show="loading" class="mr-2"><x-aura::icon.loading class="h-4 w-4" /></span>
-            <span x-text="loading ? @js(__('Generating…')) : @js(__('Generate suggestion'))"></span>
-        </x-aura::button>
-        <p class="text-xs text-gray-500 dark:text-gray-400">
-            {{ __('Review the title and description before applying them to the form.') }}
-        </p>
-    </div>
+    @if($canManageSeo && $definition)
+        <div class="flex flex-wrap items-center gap-3">
+            <x-aura::button type="button" x-on:click="generate" x-bind:disabled="loading">
+                <span x-show="loading" class="mr-2"><x-aura::icon.loading class="h-4 w-4" /></span>
+                <span x-text="loading ? @js(__('Generating…')) : @js(__('Generate suggestion'))"></span>
+            </x-aura::button>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ __('Review the title and description before applying them to the form.') }}
+            </p>
+        </div>
+    @endif
 
     <p x-show="error" x-text="error" class="mt-3 text-sm text-red-600 dark:text-red-400"></p>
+
+    @if($canConfigureAi)
+        <div x-cloak x-show="error" class="mt-2">
+            <x-aura::button.transparent :href="route('aura.settings.page', ['page' => 'ai'])" size="sm">
+                {{ __('Review AI settings') }}
+            </x-aura::button.transparent>
+        </div>
+    @endif
 
     <div x-cloak x-show="suggestion" class="mt-4 rounded-lg border border-gray-200 p-4 dark:border-white/10">
         <div class="grid gap-4 lg:grid-cols-2">

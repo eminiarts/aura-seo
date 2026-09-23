@@ -78,7 +78,9 @@ it('builds the SEO settings page from Aura fields without a separate permissions
         'Content types',
         'SEO checks',
         'Sitemap & robots',
-    ])->and($fields->pluck('name'))->not->toContain('Permissions')
+    ])->and($page->viewAbility)->toBe('aura-seo.view')
+        ->and($page->updateAbility)->toBe('aura-seo.manage')
+        ->and($fields->pluck('name'))->not->toContain('Permissions')
         ->and($fields->pluck('slug'))->toContain(
             SeoResourceSettings::slug('articles', 'enabled'),
             SeoResourceSettings::slug('articles', 'title-pattern'),
@@ -129,7 +131,7 @@ it('generates metadata through the core AI connector', function (): void {
     {
         public function generate(string $prompt, ?string $systemPrompt = null): string
         {
-            expect($prompt)->toContain('A useful article', 'Useful content')
+            expect($prompt)->toContain('Content type: Articles', 'A useful article', 'Useful content')
                 ->and($systemPrompt)->toContain('meta_title', 'meta_description');
 
             return '{"meta_title":"Generated title","meta_description":"Generated description"}';
@@ -141,10 +143,17 @@ it('generates metadata through the core AI connector', function (): void {
         }
     });
 
-    $manager = createSeoUserWithPermissions([(string) config('aura-seo.permissions.manage')]);
+    app(SeoRegistry::class)->register(
+        SeoResourceDefinition::make('articles', Article::class)->title('title')->description('summary')
+    );
+    $manager = createSeoUserWithPermissions([
+        (string) config('aura-seo.permissions.manage'),
+        'create-seo-test-article',
+    ]);
 
     $this->actingAs($manager)
         ->postJson(route('aura.seo.ai-metadata'), [
+            'resource' => 'articles',
             'title' => 'A useful article',
             'content' => '<p>Useful content</p>',
         ])
@@ -169,16 +178,93 @@ it('does not expose unexpected AI connector failures', function (): void {
         }
     });
 
-    $manager = createSeoUserWithPermissions([(string) config('aura-seo.permissions.manage')]);
+    app(SeoRegistry::class)->register(SeoResourceDefinition::make('articles', Article::class));
+    $manager = createSeoUserWithPermissions([
+        (string) config('aura-seo.permissions.manage'),
+        'create-seo-test-article',
+    ]);
 
     $this->actingAs($manager)
         ->postJson(route('aura.seo.ai-metadata'), [
+            'resource' => 'articles',
             'title' => 'A useful article',
         ])
         ->assertStatus(500)
         ->assertExactJson([
             'message' => 'AI metadata generation failed.',
         ]);
+});
+
+it('requires permission for the target resource before generating metadata', function (): void {
+    app(SeoRegistry::class)->register(SeoResourceDefinition::make('articles', Article::class));
+    $manager = createSeoUserWithPermissions([(string) config('aura-seo.permissions.manage')]);
+
+    $this->actingAs($manager)
+        ->postJson(route('aura.seo.ai-metadata'), [
+            'resource' => 'articles',
+            'title' => 'A useful article',
+        ])
+        ->assertForbidden();
+});
+
+it('requires update permission for an existing AI metadata target', function (): void {
+    app(SeoRegistry::class)->register(SeoResourceDefinition::make('articles', Article::class));
+    $article = Article::query()->create(['title' => 'Existing article']);
+    $manager = createSeoUserWithPermissions([(string) config('aura-seo.permissions.manage')]);
+
+    $this->actingAs($manager)
+        ->postJson(route('aura.seo.ai-metadata'), [
+            'resource' => 'articles',
+            'record_id' => (string) $article->getKey(),
+            'title' => 'Existing article',
+        ])
+        ->assertForbidden();
+});
+
+it('allows diagnostics users to view SEO settings without changing them', function (): void {
+    $diagnosticsUser = createSeoUserWithPermissions([(string) config('aura-seo.permissions.diagnose')]);
+
+    $this->actingAs($diagnosticsUser)
+        ->get(route('aura.settings.page', ['page' => 'seo']))
+        ->assertOk()
+        ->assertDontSee('Save');
+
+    $manager = createSeoUserWithPermissions([(string) config('aura-seo.permissions.manage')]);
+
+    $this->actingAs($manager)
+        ->get(route('aura.settings.page', ['page' => 'seo']))
+        ->assertOk()
+        ->assertSee('Save');
+});
+
+it('preserves SEO metadata when an authenticated editor lacks the SEO management permission', function (): void {
+    createSeoSettings([
+        'seo-separator' => '|',
+        'seo-site-name' => 'Example',
+        'seo-title-pattern' => '[Post Title] [Separator] [Site Name]',
+    ]);
+    $article = Article::query()->create([
+        'fields' => [
+            'seo_meta_description' => 'Original description',
+            'seo_meta_title' => 'Original title',
+        ],
+        'title' => 'Original article',
+    ])->fresh();
+    $editor = createSeoUserWithPermissions(['update-seo-test-article']);
+
+    $this->actingAs($editor);
+    $article->update([
+        'fields' => [
+            'seo_meta_description' => 'Injected description',
+            'seo_meta_title' => 'Injected title',
+        ],
+        'title' => 'Updated article',
+    ]);
+
+    expect($article->fresh())
+        ->title->toBe('Updated article')
+        ->seo_meta_title->toBe('Original title')
+        ->seo_meta_description->toBe('Original description');
 });
 
 it('keeps AI suggestions in a review step before applying them to the form', function (): void {

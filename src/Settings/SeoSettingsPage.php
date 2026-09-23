@@ -29,6 +29,8 @@ final class SeoSettingsPage
             description: 'Manage search metadata, social sharing, SEO checks, the sitemap, and robots.txt.',
             order: 25,
             defaults: self::defaults($registry),
+            viewAbility: 'aura-seo.view',
+            updateAbility: 'aura-seo.manage',
         );
     }
 
