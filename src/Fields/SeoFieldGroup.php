@@ -12,6 +12,7 @@ use Aura\Base\Fields\Text;
 use Aura\Base\Fields\Textarea;
 use Aura\Base\Fields\View;
 use Aura\Seo\Services\SeoDefaults;
+use Illuminate\Support\Facades\Gate;
 
 final class SeoFieldGroup
 {
@@ -37,7 +38,10 @@ final class SeoFieldGroup
             ]),
             self::field('Meta title', $slug('meta_title'), Text::class, [
                 'instructions' => 'Recommended maximum: 60 characters.',
-                'set' => static fn ($resource, array $field, mixed $value): mixed => app(SeoDefaults::class)->metaTitle($resource, $value),
+                'set' => static fn ($resource, array $field, mixed $value): mixed => app(SeoDefaults::class)->metaTitle(
+                    $resource,
+                    self::authorizedValue($resource, $field, $value),
+                ),
                 'validation' => 'nullable|max:60',
             ]),
             self::field('Meta description', $slug('meta_description'), Textarea::class, [
@@ -92,6 +96,7 @@ final class SeoFieldGroup
     {
         return array_merge([
             'conditional_logic' => [],
+            'disabled' => static fn (): bool => Gate::denies('aura-seo.manage'),
             'name' => $name,
             'on_forms' => true,
             'on_index' => false,
@@ -99,6 +104,27 @@ final class SeoFieldGroup
             'slug' => $slug,
             'type' => $type,
             'validation' => '',
+            'set' => static fn ($resource, array $field, mixed $value): mixed => self::authorizedValue(
+                $resource,
+                $field,
+                $value,
+            ),
         ], $options);
+    }
+
+    /** @param array<string, mixed> $field */
+    private static function authorizedValue($resource, array $field, mixed $value): mixed
+    {
+        if (auth()->guest() || Gate::allows('aura-seo.manage')) {
+            return $value;
+        }
+
+        $original = $resource->getRawOriginal();
+
+        if (array_key_exists($field['slug'], $original)) {
+            return $original[$field['slug']];
+        }
+
+        return $resource->usesMeta() ? $resource->getMeta($field['slug']) : null;
     }
 }

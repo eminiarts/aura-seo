@@ -70,6 +70,22 @@ test('diagnostics surface duplicate canonicals and missing descriptions', functi
         ->and(collect($issues)->first(fn ($issue): bool => $issue->message === 'Meta description is missing.')?->actionLabel)->toBe('Edit record');
 });
 
+test('diagnostics flag missing site defaults that affect search visibility', function () {
+    $profile = new SiteProfileData(
+        baseUrl: 'https://example.test',
+        enabled: true,
+        follow: true,
+        hostname: 'example.test',
+    );
+
+    $messages = collect(app(SeoDiagnostics::class)->scan($profile))->pluck('message');
+
+    expect($messages)
+        ->toContain('Search indexing is disabled by default.')
+        ->toContain('Default meta description is missing.')
+        ->toContain('Default social image is missing.');
+});
+
 test('diagnostics are embedded in settings while the command remains permission-aware', function () {
     $profile = diagnosticsProfile();
     registerDiagnosticsDefinition();

@@ -115,6 +115,14 @@ class AuraSeoServiceProvider extends PackageServiceProvider
 
     private function registerGates(): void
     {
+        Gate::define('aura-seo.view', fn (Authenticatable $user): bool => $this->hasAccess(
+            $user,
+            (string) config('aura-seo.permissions.manage'),
+        ) || $this->hasAccess(
+            $user,
+            (string) config('aura-seo.permissions.diagnose'),
+        ));
+
         foreach ([
             'aura-seo.manage' => 'manage',
             'aura-seo.diagnose' => 'diagnose',

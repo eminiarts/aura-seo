@@ -116,7 +116,7 @@ final class ConfiguredSiteProfileResolver implements SiteProfileResolver
         return $defaults;
     }
 
-    private function nullableBool(mixed $value, string $truthy, string $falsy): ?bool
+    private function nullableBool(bool|string|null $value, string $truthy, string $falsy): ?bool
     {
         if (is_bool($value)) {
             return $value;

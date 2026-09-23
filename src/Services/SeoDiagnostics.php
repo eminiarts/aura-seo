@@ -18,6 +18,31 @@ final readonly class SeoDiagnostics
         $issues = [];
         $canonicals = [];
 
+        if (! $profile->index) {
+            $issues[] = new DiagnosticIssue(
+                'warning',
+                'Search indexing is disabled by default.',
+                actionLabel: 'Review settings',
+                actionUrl: $this->settingsUrl(),
+            );
+        }
+
+        if ($profile->defaultDescription === null) {
+            $issues[] = new DiagnosticIssue(
+                'warning',
+                'Default meta description is missing.',
+                actionLabel: 'Review settings',
+                actionUrl: $this->settingsUrl(),
+            );
+        }
+
+        if (is_file(public_path('robots.txt'))) {
+            $issues[] = new DiagnosticIssue(
+                'warning',
+                'A public robots.txt file may take priority over Aura SEO.',
+            );
+        }
+
         if ($this->registry->all() === []) {
             $issues[] = new DiagnosticIssue(
                 'warning',
