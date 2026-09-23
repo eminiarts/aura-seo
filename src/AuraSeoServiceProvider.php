@@ -18,6 +18,7 @@ use Aura\Seo\Services\SeoDefaults;
 use Aura\Seo\Services\SeoDiagnostics;
 use Aura\Seo\Services\SeoPermissionRegistrar;
 use Aura\Seo\Services\SeoRegistry;
+use Aura\Seo\Services\SeoSettingsData;
 use Aura\Seo\Services\SitemapGenerator;
 use Aura\Seo\Services\SitemapRegistry;
 use Aura\Seo\Services\TitlePatternRenderer;
@@ -55,6 +56,7 @@ class AuraSeoServiceProvider extends PackageServiceProvider
         $this->app->singleton(SeoDefaults::class);
         $this->app->singleton(SeoPermissionRegistrar::class);
         $this->app->singleton(SeoRegistry::class);
+        $this->app->scoped(SeoSettingsData::class);
         $this->app->singleton(SitemapGenerator::class);
         $this->app->singleton(SitemapRegistry::class);
         $this->app->singleton(TitlePatternRenderer::class);

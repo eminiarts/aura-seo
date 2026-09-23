@@ -7,7 +7,7 @@
 @php($canConfigureAi = auth()->user() && method_exists(auth()->user(), 'isSuperAdmin') && auth()->user()->isSuperAdmin())
 
 <div
-    class="w-full px-4 pb-4"
+    class="w-full"
     data-ai-suggestion-review
     x-data="{
         loading: false,
@@ -81,18 +81,22 @@
     }"
 >
     @if($canManageSeo && $definition)
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-primary-200 bg-primary-50/70 px-5 py-4 dark:border-primary-900 dark:bg-primary-950/20">
+            <div class="flex min-w-0 items-start gap-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-100 text-xs font-bold text-primary-700 dark:bg-primary-900 dark:text-primary-200">AI</span>
+                <div>
+                    <p class="text-sm font-semibold text-primary-900 dark:text-primary-100">{{ __('Generate a title and description') }}</p>
+                    <p class="mt-1 text-xs text-primary-700/80 dark:text-primary-300/80">{{ __('Review the suggestion before applying it to the form.') }}</p>
+                </div>
+            </div>
             <x-aura::button type="button" x-on:click="generate" x-bind:disabled="loading">
                 <span x-show="loading" class="mr-2"><x-aura::icon.loading class="h-4 w-4" /></span>
                 <span x-text="loading ? @js(__('Generating…')) : @js(__('Generate suggestion'))"></span>
             </x-aura::button>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ __('Review the title and description before applying them to the form.') }}
-            </p>
         </div>
     @endif
 
-    <p x-show="error" x-text="error" class="mt-3 text-sm text-red-600 dark:text-red-400"></p>
+    <p x-cloak x-show="error" x-text="error" class="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300"></p>
 
     @if($canConfigureAi)
         <div x-cloak x-show="error" class="mt-2">
@@ -102,16 +106,20 @@
         </div>
     @endif
 
-    <div x-cloak x-show="suggestion" class="mt-4 rounded-lg border border-gray-200 p-4 dark:border-white/10">
-        <div class="grid gap-4 lg:grid-cols-2">
-            <div>
+    <div x-cloak x-show="suggestion" class="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-white/10 dark:bg-gray-800">
+        <div class="border-b border-gray-200 px-5 py-4 dark:border-white/10">
+            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('AI suggestion review') }}</p>
+            <h3 class="mt-1 font-semibold text-gray-900 dark:text-white">{{ __('Compare and apply') }}</h3>
+        </div>
+        <div class="grid gap-4 p-5 lg:grid-cols-2">
+            <div class="rounded-lg border border-gray-200 p-4 dark:border-white/10">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ __('Current values') }}</p>
                 <p class="mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100" x-text="currentTitle || @js(__('Uses the current default'))"></p>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300" x-text="currentDescription || @js(__('Uses the current default'))"></p>
+                <p class="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300" x-text="currentDescription || @js(__('Uses the current default'))"></p>
             </div>
 
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ __('Suggested values') }}</p>
+            <div class="rounded-lg border border-primary-200 bg-primary-50/40 p-4 dark:border-primary-900 dark:bg-primary-950/20">
+                <p class="text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-300">{{ __('Suggested values') }}</p>
                 <label class="mt-3 flex cursor-pointer items-start gap-3">
                     <input class="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500" type="checkbox" x-model="applyTitle">
                     <span>
@@ -122,14 +130,14 @@
                 <label class="mt-4 flex cursor-pointer items-start gap-3">
                     <input class="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500" type="checkbox" x-model="applyDescription">
                     <span>
-                        <span class="block text-sm text-gray-700 dark:text-gray-200" x-text="suggestion?.meta_description"></span>
+                        <span class="block text-sm leading-6 text-gray-700 dark:text-gray-200" x-text="suggestion?.meta_description"></span>
                         <span class="mt-1 block text-xs text-gray-500 dark:text-gray-400" x-text="`${suggestion?.meta_description?.length || 0} / 160`"></span>
                     </span>
                 </label>
             </div>
         </div>
 
-        <div class="mt-4 flex flex-wrap justify-end gap-2 border-t border-gray-200 pt-4 dark:border-white/10">
+        <div class="flex flex-wrap justify-end gap-2 border-t border-gray-200 px-5 py-4 dark:border-white/10">
             <x-aura::button.transparent type="button" x-on:click="suggestion = null">
                 {{ __('Keep current values') }}
             </x-aura::button.transparent>

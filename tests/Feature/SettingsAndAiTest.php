@@ -74,9 +74,10 @@ it('builds the SEO settings page from Aura fields without a separate permissions
     $fields = collect($page->fields);
 
     expect($fields->where('type', Tab::class)->pluck('name')->all())->toBe([
+        'Overview',
         'Site defaults',
         'Content types',
-        'SEO checks',
+        'Diagnostics',
         'Sitemap & robots',
     ])->and($page->viewAbility)->toBe('aura-seo.view')
         ->and($page->updateAbility)->toBe('aura-seo.manage')
@@ -109,9 +110,10 @@ it('renders the production SEO settings page through the standard Aura settings 
     $this->actingAs($admin)
         ->get(route('aura.settings.page', ['page' => 'seo']))
         ->assertOk()
+        ->assertSee('SEO overview')
         ->assertSee('Site defaults')
         ->assertSee('Content types')
-        ->assertSee('SEO checks')
+        ->assertSee('Diagnostics')
         ->assertSee('Sitemap &amp; robots', false)
         ->assertDontSee('Capability matrix');
 });
