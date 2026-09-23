@@ -25,9 +25,14 @@
     <div class="grid gap-6 xl:grid-cols-2">
         <section class="aura-card overflow-hidden">
             <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-6 py-5 dark:border-white/10">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Sitemap') }}</p>
-                    <h3 class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">/sitemap.xml</h3>
+                <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                        <x-aura::icon icon="collection" size="sm" />
+                    </span>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Sitemap') }}</p>
+                        <h3 class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">/sitemap.xml</h3>
+                    </div>
                 </div>
                 <span class="rounded-full px-2.5 py-1 text-xs font-semibold {{ $settingsData['profile']?->sitemapEnabled ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-800' : 'bg-gray-100 text-gray-600 ring-1 ring-gray-200 dark:bg-white/5 dark:text-gray-300 dark:ring-white/10' }}">
                     {{ $settingsData['profile']?->sitemapEnabled ? __('Enabled') : __('Disabled') }}
@@ -57,9 +62,14 @@
 
         <section class="aura-card overflow-hidden">
             <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-6 py-5 dark:border-white/10">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Robots') }}</p>
-                    <h3 class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">/robots.txt</h3>
+                <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                        <x-aura::icon icon="search" size="sm" />
+                    </span>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Robots') }}</p>
+                        <h3 class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">/robots.txt</h3>
+                    </div>
                 </div>
                 <span class="rounded-full px-2.5 py-1 text-xs font-semibold {{ $settingsData['profile']?->robotsEnabled ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:ring-emerald-800' : 'bg-gray-100 text-gray-600 ring-1 ring-gray-200 dark:bg-white/5 dark:text-gray-300 dark:ring-white/10' }}">
                     {{ $settingsData['profile']?->robotsEnabled ? __('Enabled') : __('Disabled') }}

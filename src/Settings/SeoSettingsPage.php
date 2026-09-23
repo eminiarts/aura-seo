@@ -136,12 +136,12 @@ final class SeoSettingsPage
         foreach ($registry->all() as $definition) {
             $label = Str::headline($definition->key);
             $fields[] = self::input("Enable SEO for {$label}", SeoResourceSettings::slug($definition, 'enabled'), Boolean::class, [
-                'style' => ['width' => '50'],
+                'style' => ['width' => '100'],
             ]);
 
             if ($definition->includesSitemap()) {
                 $fields[] = self::input("Include {$label} in the sitemap", SeoResourceSettings::slug($definition, 'sitemap'), Boolean::class, [
-                    'style' => ['width' => '50'],
+                    'style' => ['width' => '100'],
                 ]);
             }
 

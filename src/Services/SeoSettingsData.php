@@ -4,8 +4,10 @@ namespace Aura\Seo\Services;
 
 use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Data\DiagnosticIssue;
+use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Data\SiteProfileData;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -18,6 +20,7 @@ final class SeoSettingsData
         private readonly SiteProfileResolver $profiles,
         private readonly SeoDiagnostics $diagnostics,
         private readonly SeoRegistry $registry,
+        private readonly MetadataResolver $metadata,
     ) {}
 
     /** @return array<string, mixed> */
@@ -73,6 +76,7 @@ final class SeoSettingsData
                 'definition' => $definition,
                 'descriptionField' => $definition->descriptionField(),
                 'enabled' => $defaults?->enabled ?? false,
+                'example' => $this->example($definition, $profile, $query),
                 'issueCount' => count(array_filter(
                     $issues,
                     static fn (DiagnosticIssue $issue): bool => $issue->source === $definition->key,
@@ -91,5 +95,45 @@ final class SeoSettingsData
     private function count(?Builder $query): int
     {
         return $query?->count() ?? 0;
+    }
+
+    /** @return array{description: string|null, recordTitle: string, title: string|null, url: string|null}|null */
+    private function example(SeoResourceDefinition $definition, ?SiteProfileData $profile, ?Builder $query): ?array
+    {
+        if (! $profile || ! $query) {
+            return null;
+        }
+
+        $record = (clone $query)
+            ->limit(10)
+            ->get()
+            ->first(static fn (Model $model): bool => $definition->isPublic($model, $profile));
+
+        if (! $record instanceof Model) {
+            return null;
+        }
+
+        $metadata = $this->metadata->resolve($record, $profile, $definition);
+        $recordTitle = $this->string($definition->mappedTitle($record, $profile))
+            ?? $metadata->title
+            ?? Str::headline($definition->key);
+
+        return [
+            'description' => $metadata->description,
+            'recordTitle' => $recordTitle,
+            'title' => $metadata->title,
+            'url' => $metadata->canonical,
+        ];
+    }
+
+    private function string(mixed $value): ?string
+    {
+        if (! is_scalar($value) && ! $value instanceof \Stringable) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+
+        return $value === '' ? null : $value;
     }
 }

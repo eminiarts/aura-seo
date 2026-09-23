@@ -1,6 +1,8 @@
 @php($settingsData = app(\Aura\Seo\Services\SeoSettingsData::class)->current())
 @php($profile = $settingsData['profile'])
 @php($issues = $settingsData['issues'])
+@php($sitemapReady = (bool) ($profile?->enabled && $profile?->sitemapEnabled))
+@php($robotsReady = (bool) $profile?->robotsEnabled)
 
 <div class="w-full px-2 pb-2">
     <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
@@ -70,8 +72,8 @@
                     <div class="divide-y divide-gray-200 dark:divide-white/10">
                         @foreach(array_slice($issues, 0, 4) as $issue)
                             <div class="flex flex-wrap items-center gap-4 px-6 py-4">
-                                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold {{ $issue->level === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' }}">
-                                    {{ $issue->level === 'error' ? '!' : '•' }}
+                                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg {{ $issue->level === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' }}">
+                                    <x-aura::icon :icon="$issue->level === 'error' ? 'exclamation' : 'info'" size="sm" />
                                 </span>
                                 <div class="min-w-0 flex-1">
                                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $issue->message }}</p>
@@ -148,7 +150,9 @@
                         [__('Social image fallback'), (bool) ($profile?->defaultOpenGraphImage || $profile?->defaultSocialImage)],
                     ] as [$label, $ready])
                         <div class="flex items-center gap-3 text-gray-700 dark:text-gray-200">
-                            <span class="h-2.5 w-2.5 rounded-full {{ $ready ? 'bg-emerald-500' : 'bg-amber-500' }}"></span>
+                            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {{ $ready ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' }}">
+                                <x-aura::icon :icon="$ready ? 'check' : 'exclamation'" size="xs" />
+                            </span>
                             <span>{{ $label }}</span>
                         </div>
                     @endforeach
@@ -163,14 +167,30 @@
                 <div class="divide-y divide-gray-200 dark:divide-white/10">
                     @if($settingsData['sitemapUrl'])
                         <a class="flex items-center justify-between gap-3 px-5 py-4 text-sm hover:bg-gray-50 dark:hover:bg-white/[0.03]" href="{{ $settingsData['sitemapUrl'] }}" target="_blank">
-                            <span class="font-semibold text-gray-900 dark:text-gray-100">/sitemap.xml</span>
-                            <span class="text-primary-600 dark:text-primary-400">{{ __('Open') }}</span>
+                            <span class="flex min-w-0 items-center gap-3">
+                                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                                    <x-aura::icon icon="collection" size="sm" />
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block font-semibold text-gray-900 dark:text-gray-100">/sitemap.xml</span>
+                                    <span class="block text-xs text-gray-500 dark:text-gray-400">{{ trans_choice(':count indexed URL|:count indexed URLs', $settingsData['totalRecords'], ['count' => number_format($settingsData['totalRecords'])]) }}</span>
+                                </span>
+                            </span>
+                            <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $sitemapReady ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-gray-100 text-gray-600 dark:bg-white/5 dark:text-gray-300' }}">{{ $sitemapReady ? '200' : __('Off') }}</span>
                         </a>
                     @endif
                     @if($settingsData['robotsUrl'])
                         <a class="flex items-center justify-between gap-3 px-5 py-4 text-sm hover:bg-gray-50 dark:hover:bg-white/[0.03]" href="{{ $settingsData['robotsUrl'] }}" target="_blank">
-                            <span class="font-semibold text-gray-900 dark:text-gray-100">/robots.txt</span>
-                            <span class="text-primary-600 dark:text-primary-400">{{ __('Open') }}</span>
+                            <span class="flex min-w-0 items-center gap-3">
+                                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                                    <x-aura::icon icon="search" size="sm" />
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="block font-semibold text-gray-900 dark:text-gray-100">/robots.txt</span>
+                                    <span class="block text-xs text-gray-500 dark:text-gray-400">{{ __('Crawler instructions') }}</span>
+                                </span>
+                            </span>
+                            <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $robotsReady ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-gray-100 text-gray-600 dark:bg-white/5 dark:text-gray-300' }}">{{ $robotsReady ? '200' : __('Off') }}</span>
                         </a>
                     @endif
                 </div>

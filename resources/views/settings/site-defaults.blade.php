@@ -93,18 +93,21 @@
             <section class="aura-card p-5">
                 <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Public output') }}</p>
                 <div class="mt-4 space-y-3 text-sm">
-                    <div class="flex items-center justify-between gap-4">
-                        <span class="text-gray-700 dark:text-gray-200">{{ __('SEO metadata') }}</span>
-                        <span class="font-semibold {{ $profile?->enabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500' }}">{{ $profile?->enabled ? __('Enabled') : __('Disabled') }}</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-4">
-                        <span class="text-gray-700 dark:text-gray-200">{{ __('Sitemap') }}</span>
-                        <span class="font-semibold {{ $profile?->sitemapEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500' }}">{{ $profile?->sitemapEnabled ? __('Enabled') : __('Disabled') }}</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-4">
-                        <span class="text-gray-700 dark:text-gray-200">{{ __('Robots.txt') }}</span>
-                        <span class="font-semibold {{ $profile?->robotsEnabled ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500' }}">{{ $profile?->robotsEnabled ? __('Enabled') : __('Disabled') }}</span>
-                    </div>
+                    @foreach([
+                        [__('SEO metadata'), (bool) $profile?->enabled],
+                        [__('Sitemap'), (bool) $profile?->sitemapEnabled],
+                        [__('Robots.txt'), (bool) $profile?->robotsEnabled],
+                    ] as [$label, $ready])
+                        <div class="flex items-center justify-between gap-4">
+                            <span class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {{ $ready ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400' }}">
+                                    <x-aura::icon :icon="$ready ? 'check' : 'close'" size="xs" />
+                                </span>
+                                {{ $label }}
+                            </span>
+                            <span class="font-semibold {{ $ready ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500' }}">{{ $ready ? __('Enabled') : __('Disabled') }}</span>
+                        </div>
+                    @endforeach
                 </div>
             </section>
         </aside>

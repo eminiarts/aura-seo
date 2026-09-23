@@ -20,17 +20,32 @@
 
     <div class="mb-6 grid gap-4 sm:grid-cols-3">
         <section class="aura-card p-5">
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Status') }}</p>
+            <div class="flex items-center justify-between gap-3">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Status') }}</p>
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg {{ $issues === [] ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' }}">
+                    <x-aura::icon :icon="$issues === [] ? 'check' : 'exclamation'" size="sm" />
+                </span>
+            </div>
             <p class="mt-4 text-2xl font-semibold {{ $issues === [] ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white' }}">{{ $issues === [] ? __('All clear') : __('Needs review') }}</p>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('Based on current saved settings') }}</p>
         </section>
         <section class="aura-card p-5">
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Errors') }}</p>
+            <div class="flex items-center justify-between gap-3">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Errors') }}</p>
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg {{ $settingsData['errorCount'] > 0 ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400' : 'bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400' }}">
+                    <x-aura::icon icon="exclamation" size="sm" />
+                </span>
+            </div>
             <p class="mt-4 text-3xl font-semibold {{ $settingsData['errorCount'] > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white' }}">{{ $settingsData['errorCount'] }}</p>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('Fix these first') }}</p>
         </section>
         <section class="aura-card p-5">
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Warnings') }}</p>
+            <div class="flex items-center justify-between gap-3">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('Warnings') }}</p>
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg {{ $settingsData['warningCount'] > 0 ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' : 'bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400' }}">
+                    <x-aura::icon icon="info" size="sm" />
+                </span>
+            </div>
             <p class="mt-4 text-3xl font-semibold {{ $settingsData['warningCount'] > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-900 dark:text-white' }}">{{ $settingsData['warningCount'] }}</p>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('Recommended improvements') }}</p>
         </section>
