@@ -51,8 +51,8 @@
         </section>
     </div>
 
-    <div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(19rem,1fr)]">
-        <div class="space-y-6">
+    <div data-seo-workspace-layout="overview" class="mt-6 grid gap-6 sm:grid-cols-3">
+        <div class="space-y-6 sm:col-span-2">
             <section class="aura-card overflow-hidden">
                 <div class="flex items-start justify-between gap-4 border-b border-gray-200 px-6 py-5 dark:border-white/10">
                     <div>

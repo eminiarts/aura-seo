@@ -17,8 +17,8 @@
         @include('aura-seo::fields.ai-prefill', ['field' => $aiField])
     @endif
 
-    <div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(19rem,1fr)]">
-        <section class="aura-card overflow-hidden">
+    <div data-seo-workspace-layout="record-metadata" class="mt-6 grid gap-6 sm:grid-cols-3">
+        <section class="aura-card overflow-hidden sm:col-span-2">
             <div class="flex flex-wrap gap-2 border-b border-gray-200 px-5 pt-4 dark:border-white/10" role="tablist" aria-label="{{ __('SEO fields') }}">
                 @foreach(['search' => __('Search'), 'social' => __('Social'), 'advanced' => __('Advanced')] as $section => $label)
                     <button

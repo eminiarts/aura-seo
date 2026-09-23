@@ -77,8 +77,8 @@
             @php($indexSlug = \Aura\Seo\Services\SeoResourceSettings::slug($definition, 'index'))
             @php($followSlug = \Aura\Seo\Services\SeoResourceSettings::slug($definition, 'follow'))
 
-            <div x-cloak x-show="selected === @js($resource['key'])" x-transition.opacity class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(19rem,1fr)]">
-                <section class="aura-card overflow-hidden">
+            <div data-seo-workspace-layout="content-type-defaults" x-cloak x-show="selected === @js($resource['key'])" x-transition.opacity class="mt-6 grid gap-6 sm:grid-cols-3">
+                <section class="aura-card overflow-hidden sm:col-span-2">
                     <div class="flex flex-wrap items-start justify-between gap-3 border-b border-gray-200 px-6 py-5 dark:border-white/10">
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-wider text-primary-600 dark:text-primary-400">{{ $resource['label'] }}</p>
