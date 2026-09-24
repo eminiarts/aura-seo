@@ -25,7 +25,7 @@ final readonly class RobotsTxtGenerator
                 }
             }
 
-            if (config('aura-seo.routes.sitemap', true)) {
+            if (config('aura-seo.routes.sitemap', true) && $profile->sitemapEnabled) {
                 $lines[] = 'Sitemap: '.$this->canonicals->normalize('/sitemap.xml', $profile->baseUrl);
             }
 

@@ -13,6 +13,7 @@ class RobotsController extends Controller
     public function __invoke(Request $request, RobotsTxtGenerator $robots, SiteProfileResolver $profiles): Response
     {
         $profile = $profiles->resolve($request->getHost());
+        abort_if($profile !== null && ! $profile->robotsEnabled, 404);
 
         return response($robots->render($profile), 200, [
             'Content-Type' => 'text/plain; charset=UTF-8',

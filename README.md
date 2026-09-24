@@ -28,14 +28,16 @@ is not imported or required by production code.
 
 ## Features
 
-- one SEO settings page per Team for canonical URL, robots defaults, title
-  patterns, locale, and social-image defaults
+- one Aura-native SEO settings page per Team with tabs for site defaults,
+  content types, SEO checks, and sitemap/robots controls
+- per-content-type SEO, sitemap, title-pattern, description, social-image, and
+  search-visibility defaults
 - reusable `SeoFieldGroup` built only from existing Aura fields
 - deterministic metadata resolution order: record override → Resource mapping →
-  SEO settings → application fallback
+  content-type defaults → site defaults → application fallback
 - automatic new-record titles from `[Post Title] [Separator] [Site Name]`
-- AI-assisted meta title and description generation through Aura's core AI
-  connector
+- AI-assisted meta title and description suggestions through Aura's core AI
+  connector, with review and selective apply before the record is saved
 - canonical URL normalization with fail-closed external canonical rejection by
   default
 - Blade metadata renderer and in-editor search/social previews
@@ -43,15 +45,15 @@ is not imported or required by production code.
 - explicit `robots.txt` generation with safe directive sanitization
 - cache reuse plus automatic invalidation on SEO settings or registered Resource
   changes
-- diagnostics embedded in SEO settings plus a CLI command for
-  canonical, description, and sitemap coverage
+- concise SEO checks embedded in settings, with direct edit actions where
+  available, plus a CLI command for automated checks
 - Team-aware hostname isolation and permission-aware public boundaries
 - admin gates and permission catalog for SEO management and diagnostics
 
 ## Requirements
 
 - PHP 8.4+
-- Aura CMS 2.x
+- Aura CMS 1.x
 - Laravel 12 or 13
 - Livewire 4
 - PHP XMLWriter extension
@@ -85,14 +87,18 @@ To expose anything publicly, the host must do two things:
 
 ## SEO settings
 
-Aura SEO registers a sidebar entry at `/admin/settings/seo`. Each Team stores
-its site name, canonical base URL, separator,
-title pattern, default description, Open Graph and Twitter images, locale, and
-robots behavior. Diagnostics appear at the bottom of the same page and inspect
-the last saved values.
+Aura SEO registers a sidebar entry at `/admin/settings/seo`. The page uses
+Aura's standard tabs, panels, fields, image pickers, selects, notices, and
+buttons. Each Team stores its site defaults, content-type defaults, sitemap and
+robots controls, and SEO checks in one place.
 
-The hostname is derived from the canonical base URL. With Teams enabled,
-settings and public resolution remain Team-isolated.
+The hostname is derived from the site URL. With Teams enabled, settings and
+public resolution remain Team-isolated.
+
+The HTML files in `docs/prototypes/seo-product` are rough product-flow outlines
+only. They are not production markup or final copy. Production changes should
+reuse Aura components and styling; custom markup or styling is added only when
+Aura has no suitable component.
 
 ## Registering Resources
 
@@ -145,8 +151,9 @@ The field group includes:
 
 - SEO slug
 - meta title and description
-- **Pre-fill with AI**, using the current record title/content and the AI
-  provider configured under **Settings → AI**
+- **Generate suggestion**, using the current record title/content and the AI
+  provider configured under **Settings → AI**. Suggestions are reviewed before
+  selected values are applied to the form.
 - canonical override
 - robots index/follow toggles
 - Open Graph title, description, and image
@@ -209,8 +216,10 @@ php artisan aura-seo:diagnose --host=www.example.com
 php artisan aura-seo:sync-permissions
 ```
 
-Global Admins and Super Admins always pass the packaged SEO gates. Other users
-must have the configured permission slugs.
+The plugin adds these permissions to the **SEO** group in Aura's existing Role
+editor. It does not create a separate SEO permissions screen. Global Admins and
+Super Admins always pass the packaged SEO gates; other users must receive the
+configured permission through their Aura role.
 
 ## Configuration notes
 
@@ -219,7 +228,7 @@ must have the configured permission slugs.
 - `settings.*` supplies initial values for the standard SEO settings page
 - `fallbacks.*` apply only after record, Resource, and SEO settings values are
   exhausted
-- `routes.*` toggles the sitemap and robots endpoints
+- `routes.*` enables the sitemap and robots endpoints for the deployment
 - `cache.ttl` controls sitemap, robots, and metadata cache lifetime
 - `sitemap.chunk_size` controls XML page splitting
 

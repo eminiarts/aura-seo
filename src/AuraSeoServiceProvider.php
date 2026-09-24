@@ -4,6 +4,7 @@ namespace Aura\Seo;
 
 use Aura\Base\Aura;
 use Aura\Base\Resources\Team;
+use Aura\Base\Settings\SettingsRegistry;
 use Aura\Seo\Ai\AiMetadataGenerator;
 use Aura\Seo\Console\DiagnoseSeo;
 use Aura\Seo\Console\SyncSeoPermissions;
@@ -30,6 +31,8 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class AuraSeoServiceProvider extends PackageServiceProvider
 {
+    private bool $configuredResourcesRegistered = false;
+
     public function configurePackage(Package $package): void
     {
         $package
@@ -58,18 +61,19 @@ class AuraSeoServiceProvider extends PackageServiceProvider
         $this->app->singleton(TitlePatternRenderer::class);
         $this->app->singleton(SiteProfileResolver::class, ConfiguredSiteProfileResolver::class);
 
-        $this->callAfterResolving(Aura::class, function (Aura $aura): void {
-            $aura->registerSettingsPages('eminiarts/aura-seo', [SeoSettingsPage::make()]);
-        });
     }
 
     public function packageBooted(): void
     {
+        $this->registerConfiguredResources();
         $this->registerGates();
         $this->registerPermissionCatalog();
-
         $this->app->booted(function (): void {
             $this->registerConfiguredResources();
+            $this->app->make(Aura::class)->registerSettingsPages('eminiarts/aura-seo', [
+                SeoSettingsPage::make($this->app->make(SeoRegistry::class)),
+            ]);
+            $this->app->make(SettingsRegistry::class)->captureBaselineState();
             $this->app->make(SeoCacheInvalidationRegistrar::class)->register();
         });
     }
@@ -88,6 +92,11 @@ class AuraSeoServiceProvider extends PackageServiceProvider
 
     private function registerConfiguredResources(): void
     {
+        if ($this->configuredResourcesRegistered) {
+            return;
+        }
+
+        $this->configuredResourcesRegistered = true;
         $registry = $this->app->make(SeoRegistry::class);
         $configured = config('aura-seo.resources', []);
         $configured = is_callable($configured) ? $this->app->call($configured) : $configured;
@@ -105,6 +114,14 @@ class AuraSeoServiceProvider extends PackageServiceProvider
 
     private function registerGates(): void
     {
+        Gate::define('aura-seo.view', fn (Authenticatable $user): bool => $this->hasAccess(
+            $user,
+            (string) config('aura-seo.permissions.manage'),
+        ) || $this->hasAccess(
+            $user,
+            (string) config('aura-seo.permissions.diagnose'),
+        ));
+
         foreach ([
             'aura-seo.manage' => 'manage',
             'aura-seo.diagnose' => 'diagnose',

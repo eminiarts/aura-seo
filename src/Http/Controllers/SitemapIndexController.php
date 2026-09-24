@@ -13,7 +13,7 @@ class SitemapIndexController extends Controller
     public function __invoke(Request $request, SitemapGenerator $sitemaps, SiteProfileResolver $profiles): Response
     {
         $profile = $profiles->resolve($request->getHost());
-        abort_if($profile === null || ! $profile->enabled, 404);
+        abort_if($profile === null || ! $profile->enabled || ! $profile->sitemapEnabled, 404);
 
         return response($sitemaps->renderIndex($profile), 200, [
             'Content-Type' => 'application/xml; charset=UTF-8',

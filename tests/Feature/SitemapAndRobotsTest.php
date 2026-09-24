@@ -101,6 +101,42 @@ test('robots.txt is sanitized and remains fail-closed for unknown hosts', functi
         ->assertDontSee('Sitemap:');
 });
 
+test('deployment configuration can disable the sitemap and robots routes', function () {
+    config([
+        'aura-seo.routes.robots' => false,
+        'aura-seo.routes.sitemap' => false,
+    ]);
+    createSeoSettings([
+        'seo-canonical-base-url' => 'https://disabled.test',
+        'seo-enabled' => true,
+    ]);
+    registerSitemapDefinition();
+
+    $this->get('https://disabled.test/sitemap.xml')->assertNotFound();
+    $this->get('https://disabled.test/robots.txt')->assertNotFound();
+});
+
+test('a content type can be removed from the sitemap without disabling its SEO output', function () {
+    registerSitemapDefinition();
+    createSeoSettings([
+        'seo-canonical-base-url' => 'https://example.test',
+        'seo-enabled' => true,
+        'seo-resource-articles-enabled' => true,
+        'seo-resource-articles-sitemap' => false,
+        'seo-robots-follow' => true,
+        'seo-robots-index' => true,
+    ]);
+    Article::query()->create([
+        'summary' => 'Still has SEO metadata.',
+        'title' => 'Not in sitemap',
+    ]);
+
+    $this->get('https://example.test/sitemap.xml')
+        ->assertOk()
+        ->assertDontSee('/sitemap/articles-1.xml', false);
+    $this->get('https://example.test/sitemap/articles-1.xml')->assertNotFound();
+});
+
 test('cache keys are reused and invalidated after registered resource changes', function () {
     $profile = sitemapProfile();
     registerSitemapDefinition();

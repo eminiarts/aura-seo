@@ -13,8 +13,9 @@ final class SeoRegistry
 
     public function register(SeoResourceDefinition $definition): self
     {
-        if ($definition->key === '' || isset($this->definitions[$definition->key])) {
-            throw new InvalidArgumentException('SEO Resource keys must be non-empty and unique.');
+        if (preg_match('/\A[a-z0-9]+(?:[-_][a-z0-9]+)*\z/D', $definition->key) !== 1
+            || isset($this->definitions[$definition->key])) {
+            throw new InvalidArgumentException('SEO Resource keys must be unique lowercase slug values.');
         }
 
         if (! is_a($definition->resourceClass, Model::class, true)) {

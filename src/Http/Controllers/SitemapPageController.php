@@ -13,7 +13,7 @@ class SitemapPageController extends Controller
     public function __invoke(Request $request, string $source, int $page, SitemapGenerator $sitemaps, SiteProfileResolver $profiles): Response
     {
         $profile = $profiles->resolve($request->getHost());
-        abort_if($profile === null || ! $profile->enabled, 404);
+        abort_if($profile === null || ! $profile->enabled || ! $profile->sitemapEnabled, 404);
 
         $xml = $sitemaps->renderPage($profile, $source, $page);
         abort_if($xml === null, 404);

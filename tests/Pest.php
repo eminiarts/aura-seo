@@ -4,6 +4,7 @@ use Aura\Base\Resources\Option;
 use Aura\Base\Resources\Role;
 use Aura\Base\Resources\Team;
 use Aura\Base\Resources\User;
+use Aura\Seo\Tests\BootRegisteredResourceTestCase;
 use Aura\Seo\Tests\TeamsTestCase;
 use Aura\Seo\Tests\TestCase;
 use Illuminate\Support\Facades\Cache;
@@ -12,6 +13,7 @@ use Illuminate\Support\Str;
 
 uses(TestCase::class)->in('Feature', 'Unit');
 uses(TeamsTestCase::class)->in('FeatureWithTeams');
+uses(BootRegisteredResourceTestCase::class)->in('FeatureWithBootResource');
 
 function clearSeoCurrentTeamCache(int $userId): void
 {
