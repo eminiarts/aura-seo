@@ -3,6 +3,7 @@
 use Aura\Base\Ai\AiConnectionResult;
 use Aura\Base\Contracts\AiConnector;
 use Aura\Base\Fields\Tab;
+use Aura\Base\Fields\View;
 use Aura\Base\Resources\Option;
 use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Services\SeoDefaults;
@@ -81,6 +82,14 @@ it('builds the SEO settings page from Aura fields without a separate permissions
     ])->and($page->viewAbility)->toBe('aura-seo.view')
         ->and($page->updateAbility)->toBe('aura-seo.manage')
         ->and($fields->pluck('name'))->not->toContain('Permissions')
+        ->and($fields->where('type', View::class)->pluck('slug'))->toContain(
+            'seo-title-pattern-example',
+            'seo-diagnostics',
+        )
+        ->and($fields->pluck('slug'))->not->toContain(
+            'seo-sitemap-enabled',
+            'seo-robots-route-enabled',
+        )
         ->and($fields->pluck('slug'))->toContain(
             SeoResourceSettings::slug('articles', 'enabled'),
             SeoResourceSettings::slug('articles', 'title-pattern'),

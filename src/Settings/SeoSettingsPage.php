@@ -50,8 +50,6 @@ final class SeoSettingsPage
             'seo-robots-index' => config('aura-seo.settings.robots_index', false),
             'seo-robots-follow' => config('aura-seo.settings.robots_follow', false),
             'seo-robots-rules' => config('aura-seo.settings.robots_rules'),
-            'seo-sitemap-enabled' => config('aura-seo.routes.sitemap', true) && config('aura-seo.settings.sitemap_enabled', true),
-            'seo-robots-route-enabled' => config('aura-seo.routes.robots', true) && config('aura-seo.settings.robots_route_enabled', true),
         ];
 
         foreach ($registry->all() as $definition) {
@@ -98,6 +96,11 @@ final class SeoSettingsPage
             self::field('SEO title pattern', 'seo-title-pattern', Text::class, [
                 'instructions' => 'Available tokens: [Post Title], [Separator], and [Site Name].',
                 'validation' => 'required|string|max:255',
+                'style' => ['width' => '50'],
+            ]),
+            self::field('Title pattern example', 'seo-title-pattern-example', View::class, [
+                'view' => 'aura-seo::settings.title-pattern-example',
+                'style' => ['width' => '50'],
             ]),
             self::field('Default description', 'seo-default-description', Textarea::class, [
                 'validation' => 'nullable|string|max:160',
@@ -115,9 +118,8 @@ final class SeoSettingsPage
         ];
 
         if ($registry->all() === []) {
-            $fields[] = self::field('Content types', 'seo-content-types-empty-panel', Panel::class);
-            $fields[] = self::field('No content types', 'seo-content-types-empty', View::class, [
-                'view' => 'aura-seo::settings.content-types-empty',
+            $fields[] = self::field('No content types registered', 'seo-content-types-empty-panel', Panel::class, [
+                'instructions' => 'Register an SEO content type in application code to configure its defaults here.',
             ]);
         }
 
@@ -170,15 +172,6 @@ final class SeoSettingsPage
                 'view' => 'aura-seo::settings.diagnostics',
             ]),
             self::field('Sitemap & robots', 'seo-sitemap-robots-tab', Tab::class),
-            self::field('Public files', 'seo-public-files-panel', Panel::class),
-            self::field('Enable sitemap.xml', 'seo-sitemap-enabled', Boolean::class, [
-                'instructions' => 'Make the sitemap available for this site.',
-                'style' => ['width' => '50'],
-            ]),
-            self::field('Enable robots.txt', 'seo-robots-route-enabled', Boolean::class, [
-                'instructions' => 'Use Aura SEO to provide robots.txt for this site.',
-                'style' => ['width' => '50'],
-            ]),
             self::field('Search visibility', 'seo-robots-panel', Panel::class),
             self::field('Allow indexing by default', 'seo-robots-index', Boolean::class, [
                 'style' => ['width' => '50'],

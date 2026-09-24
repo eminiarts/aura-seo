@@ -4,6 +4,7 @@ namespace Aura\Seo;
 
 use Aura\Base\Aura;
 use Aura\Base\Resources\Team;
+use Aura\Base\Settings\SettingsRegistry;
 use Aura\Seo\Ai\AiMetadataGenerator;
 use Aura\Seo\Console\DiagnoseSeo;
 use Aura\Seo\Console\SyncSeoPermissions;
@@ -60,12 +61,6 @@ class AuraSeoServiceProvider extends PackageServiceProvider
         $this->app->singleton(TitlePatternRenderer::class);
         $this->app->singleton(SiteProfileResolver::class, ConfiguredSiteProfileResolver::class);
 
-        $this->callAfterResolving(Aura::class, function (Aura $aura): void {
-            $this->registerConfiguredResources();
-            $aura->registerSettingsPages('eminiarts/aura-seo', [
-                SeoSettingsPage::make($this->app->make(SeoRegistry::class)),
-            ]);
-        });
     }
 
     public function packageBooted(): void
@@ -73,8 +68,12 @@ class AuraSeoServiceProvider extends PackageServiceProvider
         $this->registerConfiguredResources();
         $this->registerGates();
         $this->registerPermissionCatalog();
-
         $this->app->booted(function (): void {
+            $this->registerConfiguredResources();
+            $this->app->make(Aura::class)->registerSettingsPages('eminiarts/aura-seo', [
+                SeoSettingsPage::make($this->app->make(SeoRegistry::class)),
+            ]);
+            $this->app->make(SettingsRegistry::class)->captureBaselineState();
             $this->app->make(SeoCacheInvalidationRegistrar::class)->register();
         });
     }

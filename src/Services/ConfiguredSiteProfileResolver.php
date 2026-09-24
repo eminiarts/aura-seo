@@ -85,8 +85,8 @@ final class ConfiguredSiteProfileResolver implements SiteProfileResolver
             separator: (string) ($values['seo-separator'] ?? config('aura-seo.settings.separator', '|')),
             teamId: $teamId,
             titleTemplate: (string) ($values['seo-title-pattern'] ?? config('aura-seo.settings.title_pattern', '[Post Title] [Separator] [Site Name]')),
-            sitemapEnabled: filter_var($values['seo-sitemap-enabled'] ?? config('aura-seo.settings.sitemap_enabled', true), FILTER_VALIDATE_BOOL),
-            robotsEnabled: filter_var($values['seo-robots-route-enabled'] ?? config('aura-seo.settings.robots_route_enabled', true), FILTER_VALIDATE_BOOL),
+            sitemapEnabled: (bool) config('aura-seo.routes.sitemap', true),
+            robotsEnabled: (bool) config('aura-seo.routes.robots', true),
             resourceDefaults: $this->resourceDefaults($values),
         );
     }

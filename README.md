@@ -226,11 +226,9 @@ configured permission through their Aura role.
 - `canonical.allow_external` defaults to `false`
 - `canonical.trailing_slash` controls normalized canonical output
 - `settings.*` supplies initial values for the standard SEO settings page
-- `settings.sitemap_enabled` and `settings.robots_route_enabled` provide the
-  initial Team-level public-file switches
 - `fallbacks.*` apply only after record, Resource, and SEO settings values are
   exhausted
-- `routes.*` toggles the sitemap and robots endpoints
+- `routes.*` enables the sitemap and robots endpoints for the deployment
 - `cache.ttl` controls sitemap, robots, and metadata cache lifetime
 - `sitemap.chunk_size` controls XML page splitting
 

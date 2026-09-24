@@ -101,12 +101,14 @@ test('robots.txt is sanitized and remains fail-closed for unknown hosts', functi
         ->assertDontSee('Sitemap:');
 });
 
-test('Team settings can disable the sitemap and robots routes', function () {
+test('deployment configuration can disable the sitemap and robots routes', function () {
+    config([
+        'aura-seo.routes.robots' => false,
+        'aura-seo.routes.sitemap' => false,
+    ]);
     createSeoSettings([
         'seo-canonical-base-url' => 'https://disabled.test',
         'seo-enabled' => true,
-        'seo-robots-route-enabled' => false,
-        'seo-sitemap-enabled' => false,
     ]);
     registerSitemapDefinition();
 
@@ -123,7 +125,6 @@ test('a content type can be removed from the sitemap without disabling its SEO o
         'seo-resource-articles-sitemap' => false,
         'seo-robots-follow' => true,
         'seo-robots-index' => true,
-        'seo-sitemap-enabled' => true,
     ]);
     Article::query()->create([
         'summary' => 'Still has SEO metadata.',

@@ -40,6 +40,10 @@ test('disabled or hostname-mismatched profiles fail closed', function () {
 });
 
 test('content type and public file defaults resolve from the Team settings record', function () {
+    config([
+        'aura-seo.routes.robots' => false,
+        'aura-seo.routes.sitemap' => false,
+    ]);
     $definition = SeoResourceDefinition::make('articles', Article::class)->title('title');
     app(SeoRegistry::class)->register($definition);
     createSeoSettings([
@@ -50,8 +54,6 @@ test('content type and public file defaults resolve from the Team settings recor
         'seo-resource-articles-follow' => 'nofollow',
         'seo-resource-articles-index' => 'noindex',
         'seo-resource-articles-title-pattern' => '[Post Title] - Articles',
-        'seo-robots-route-enabled' => false,
-        'seo-sitemap-enabled' => false,
     ]);
 
     $profile = app(SiteProfileResolver::class)->resolve('example.test');

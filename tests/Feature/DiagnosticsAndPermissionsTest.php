@@ -5,12 +5,15 @@ use Aura\Base\Settings\SettingsRegistry;
 use Aura\Seo\Contracts\SiteProfileResolver;
 use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Data\SiteProfileData;
+use Aura\Seo\Livewire\SeoDiagnosticsPanel;
 use Aura\Seo\Services\SeoDiagnostics;
 use Aura\Seo\Services\SeoPermissionRegistrar;
 use Aura\Seo\Services\SeoRegistry;
 use Aura\Seo\Tests\Fixtures\Article;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Livewire\Livewire;
 
 function diagnosticsProfile(string $host = 'example.test'): SiteProfileData
 {
@@ -115,6 +118,43 @@ test('diagnostics are embedded in settings while the command remains permission-
     $this->artisan('aura-seo:diagnose', ['--host' => 'example.test'])
         ->expectsOutputToContain('Canonical URL is used by more than one record.')
         ->assertExitCode(1);
+});
+
+test('opening SEO settings does not scan public records', function () {
+    diagnosticsProfile();
+    registerDiagnosticsDefinition();
+    Article::query()->create(['title' => 'Do not scan me']);
+    $auditor = createSeoUserWithPermissions([(string) config('aura-seo.permissions.diagnose')]);
+    $queries = [];
+
+    DB::listen(function ($query) use (&$queries): void {
+        $queries[] = $query->sql;
+    });
+
+    $this->actingAs($auditor)
+        ->get(route('aura.settings.page', ['page' => 'seo']))
+        ->assertOk()
+        ->assertSee('Checks have not been run yet.');
+
+    expect(collect($queries)->contains(
+        fn (string $query): bool => str_contains($query, 'seo_test_pages'),
+    ))->toBeFalse();
+});
+
+test('an authorized user runs diagnostics explicitly', function () {
+    diagnosticsProfile();
+    registerDiagnosticsDefinition();
+    Article::query()->create(['title' => 'Missing a description']);
+    $auditor = createSeoUserWithPermissions([(string) config('aura-seo.permissions.diagnose')]);
+
+    $this->actingAs($auditor);
+
+    Livewire::test(SeoDiagnosticsPanel::class)
+        ->assertSet('hasRun', false)
+        ->assertSee('Checks have not been run yet.')
+        ->call('runChecks')
+        ->assertSet('hasRun', true)
+        ->assertSee('Meta description is missing.');
 });
 
 test('plugin permissions are grouped for the existing Aura role editor', function () {
