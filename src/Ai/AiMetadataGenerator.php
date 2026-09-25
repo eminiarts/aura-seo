@@ -2,15 +2,16 @@
 
 namespace Aura\Seo\Ai;
 
-use Aura\Base\Contracts\AiConnector;
 use Aura\Seo\Data\AiMetadataSuggestion;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
+use Laravel\Ai\Responses\StructuredAgentResponse;
 use RuntimeException;
+
+use function Laravel\Ai\agent;
 
 final readonly class AiMetadataGenerator
 {
-    public function __construct(private AiConnector $ai) {}
-
     public function generate(
         ?string $title,
         ?string $content,
@@ -37,14 +38,27 @@ final readonly class AiMetadataGenerator
             "Content:\n{$content}",
         ]);
 
-        $response = $this->ai->generate(
-            prompt: implode("\n\n", $context),
-            systemPrompt: <<<'PROMPT'
-Generate search metadata for the supplied content and locale. Improve existing metadata when it is provided. Return only a JSON object with exactly two string keys: "meta_title" and "meta_description". Keep meta_title at 60 characters or fewer and meta_description at 160 characters or fewer. Be accurate and specific.
+        $response = agent(
+            instructions: <<<'PROMPT'
+Generate search metadata for the supplied content and locale. Improve existing metadata when it is provided. Be accurate and specific.
 PROMPT,
-        );
+            schema: static fn (JsonSchema $schema): array => [
+                'meta_title' => $schema->string()
+                    ->description('A specific search title with at most 60 characters.')
+                    ->max(60)
+                    ->required(),
+                'meta_description' => $schema->string()
+                    ->description('An accurate search description with at most 160 characters.')
+                    ->max(160)
+                    ->required(),
+            ],
+        )->prompt(implode("\n\n", $context));
 
-        $payload = $this->decode($response);
+        if (! $response instanceof StructuredAgentResponse) {
+            throw new RuntimeException('The AI provider did not return structured SEO metadata.');
+        }
+
+        $payload = $response->structured;
         $metaTitle = trim((string) ($payload['meta_title'] ?? ''));
         $metaDescription = trim((string) ($payload['meta_description'] ?? ''));
 
@@ -56,19 +70,5 @@ PROMPT,
             title: Str::limit($metaTitle, 60, ''),
             description: Str::limit($metaDescription, 160, ''),
         );
-    }
-
-    /** @return array<string, mixed> */
-    private function decode(string $response): array
-    {
-        $response = trim($response);
-        $response = preg_replace('/^```(?:json)?\s*|\s*```$/i', '', $response) ?? $response;
-        $payload = json_decode($response, true);
-
-        if (! is_array($payload)) {
-            throw new RuntimeException('The AI provider returned invalid metadata JSON.');
-        }
-
-        return $payload;
     }
 }

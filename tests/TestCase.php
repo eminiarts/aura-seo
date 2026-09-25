@@ -14,6 +14,7 @@ use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use Illuminate\Support\Facades\Schema;
 use Intervention\Image\Laravel\ServiceProvider as ImageServiceProvider;
 use Lab404\Impersonate\ImpersonateServiceProvider;
+use Laravel\Ai\AiServiceProvider;
 use Laravel\Fortify\FortifyServiceProvider;
 use Laravel\Sanctum\SanctumServiceProvider;
 use Livewire\LivewireServiceProvider;
@@ -62,6 +63,7 @@ class TestCase extends Orchestra
         return [
             LivewireServiceProvider::class,
             FortifyServiceProvider::class,
+            AiServiceProvider::class,
             SanctumServiceProvider::class,
             AuthServiceProvider::class,
             AuraServiceProvider::class,

@@ -4,7 +4,8 @@
 @php($titleField = $definition?->titleField() ?? 'title')
 @php($descriptionField = $definition?->descriptionField())
 @php($canManageSeo = \Illuminate\Support\Facades\Gate::allows('aura-seo.manage'))
-@php($canConfigureAi = auth()->user() && method_exists(auth()->user(), 'isSuperAdmin') && auth()->user()->isSuperAdmin())
+@php($canConfigureAi = \Illuminate\Support\Facades\Gate::allows(\Aura\Base\Resources\User::GLOBAL_ADMIN_GATE))
+@php($aiConfigured = app(\Aura\Base\Ai\AiStatus::class)->configured())
 
 <div
     class="w-full px-4 pb-4"
@@ -80,14 +81,14 @@
         },
     }"
 >
-    @if($canManageSeo && $definition)
+    @if($canManageSeo && $definition && $aiConfigured)
         <div class="flex flex-wrap items-center gap-3">
             <x-aura::button type="button" x-on:click="generate" x-bind:disabled="loading">
                 <span x-show="loading" class="mr-2"><x-aura::icon.loading class="h-4 w-4" /></span>
                 <span x-text="loading ? @js(__('Generating…')) : @js(__('Generate suggestion'))"></span>
             </x-aura::button>
             <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ __('Review the title and description before applying them to the form.') }}
+                {{ __('Review the suggestion before applying it to the form.') }}
             </p>
         </div>
     @endif
