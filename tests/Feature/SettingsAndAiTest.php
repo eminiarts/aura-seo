@@ -1,17 +1,23 @@
 <?php
 
-use Aura\Base\Ai\AiConnectionResult;
-use Aura\Base\Contracts\AiConnector;
+use Aura\Base\Facades\Aura;
 use Aura\Base\Fields\Tab;
 use Aura\Base\Fields\View;
+use Aura\Base\Livewire\Resource\Create;
 use Aura\Base\Resources\Option;
 use Aura\Seo\Data\SeoResourceDefinition;
 use Aura\Seo\Services\SeoDefaults;
 use Aura\Seo\Services\SeoRegistry;
 use Aura\Seo\Services\SeoResourceSettings;
 use Aura\Seo\Settings\SeoSettingsPage;
+use Aura\Seo\Tests\Fixtures\AiArticle;
 use Aura\Seo\Tests\Fixtures\Article;
 use Illuminate\Support\Facades\Route;
+use Laravel\Ai\Contracts\HasStructuredOutput;
+use Laravel\Ai\Prompts\AgentPrompt;
+use Laravel\Ai\StructuredAnonymousAgent;
+
+use function Pest\Livewire\livewire;
 
 it('fills a new record meta title from the configured pattern without overwriting explicit metadata', function (): void {
     Option::withoutGlobalScopes()->create([
@@ -135,22 +141,11 @@ it('exposes string title and description mappings for the AI prefill field', fun
         ->and(SeoResourceDefinition::make('pages', Article::class)->title(fn (): string => 'Title')->titleField())->toBeNull();
 });
 
-it('generates metadata through the core AI connector', function (): void {
-    app()->instance(AiConnector::class, new class implements AiConnector
-    {
-        public function generate(string $prompt, ?string $systemPrompt = null): string
-        {
-            expect($prompt)->toContain('Content type: Articles', 'A useful article', 'Useful content')
-                ->and($systemPrompt)->toContain('meta_title', 'meta_description');
-
-            return '{"meta_title":"Generated title","meta_description":"Generated description"}';
-        }
-
-        public function testConnection(): AiConnectionResult
-        {
-            return new AiConnectionResult(true, 'Connected');
-        }
-    });
+it('generates structured metadata through the Laravel AI SDK', function (): void {
+    StructuredAnonymousAgent::fake([[
+        'meta_title' => 'Generated title',
+        'meta_description' => 'Generated description',
+    ]]);
 
     app(SeoRegistry::class)->register(
         SeoResourceDefinition::make('articles', Article::class)->title('title')->description('summary')
@@ -171,20 +166,16 @@ it('generates metadata through the core AI connector', function (): void {
             'meta_title' => 'Generated title',
             'meta_description' => 'Generated description',
         ]);
+
+    StructuredAnonymousAgent::assertPrompted(fn (AgentPrompt $prompt): bool => $prompt->agent instanceof HasStructuredOutput
+        && $prompt->contains('Content type: Articles')
+        && $prompt->contains('A useful article')
+        && $prompt->contains('Useful content'));
 });
 
-it('does not expose unexpected AI connector failures', function (): void {
-    app()->instance(AiConnector::class, new class implements AiConnector
-    {
-        public function generate(string $prompt, ?string $systemPrompt = null): string
-        {
-            throw new Error('sensitive implementation detail');
-        }
-
-        public function testConnection(): AiConnectionResult
-        {
-            return new AiConnectionResult(false, 'Not connected');
-        }
+it('does not expose unexpected Laravel AI SDK failures', function (): void {
+    StructuredAnonymousAgent::fake(function (): never {
+        throw new Error('sensitive implementation detail');
     });
 
     app(SeoRegistry::class)->register(SeoResourceDefinition::make('articles', Article::class));
@@ -202,6 +193,40 @@ it('does not expose unexpected AI connector failures', function (): void {
         ->assertExactJson([
             'message' => 'AI metadata generation failed.',
         ]);
+});
+
+it('only renders AI prefill when the application default provider is configured', function (): void {
+    Aura::registerResources([AiArticle::class]);
+
+    if (! Route::has('aura.seo-test-ai-article.index')) {
+        Route::get('/admin/seo-test-ai-article', fn (): string => 'articles')
+            ->name('aura.seo-test-ai-article.index');
+    }
+
+    app(SeoRegistry::class)->register(
+        SeoResourceDefinition::make('ai-articles', AiArticle::class)->title('title')
+    );
+    $manager = createSeoUserWithPermissions([], superAdmin: true);
+
+    config([
+        'aura.ai.enabled' => true,
+        'ai.default' => 'openai',
+        'ai.providers.openai' => [
+            'driver' => 'openai',
+            'key' => null,
+            'url' => 'https://api.openai.com/v1',
+        ],
+    ]);
+
+    $this->actingAs($manager);
+
+    livewire(Create::class, ['slug' => 'seo-test-ai-article'])
+        ->assertDontSee('Generate suggestion');
+
+    config(['ai.providers.openai.key' => 'test-key']);
+
+    livewire(Create::class, ['slug' => 'seo-test-ai-article'])
+        ->assertSee('Generate suggestion');
 });
 
 it('requires permission for the target resource before generating metadata', function (): void {
